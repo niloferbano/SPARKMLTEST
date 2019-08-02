@@ -1,6 +1,8 @@
 package de.tum.spark.ml.codegenerator;
 
 import com.squareup.javapoet.*;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 import javax.lang.model.element.Modifier;
@@ -18,18 +20,43 @@ public class TestCodeGenerator {
     }
 
     private void generateJavaSource(){
+        SparkSession spark = SparkSession
+                .builder()
+                .appName("Test")
+                .config("spark.master", "local")
+                .getOrCreate();
+
+
         MethodSpec main = MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
                 .addParameter(String[].class, "args")
-                .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
+                .addCode("        SparkSession spark = SparkSession\n" +
+                        "                .builder()\n" +
+                        "                .appName(\"Test\")\n" +
+                        "                .config(\"spark.master\", \"local\")\n" +
+                        "                .getOrCreate();")
                 .build();
-        TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addMethod(main)
+        ParameterizedTypeName datasetRow = ParameterizedTypeName.get(
+                ClassName.get("org.apache.spark.sql", "Dataset"),
+                ClassName.get("org.apache.spark.sql", "Row")
+        );
+
+        MethodSpec featureExtractionMethod = MethodSpec.methodBuilder("featureExtraction")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ClassName.get("org.apache.spark.sql", "SparkSession"),"sparkSession")
+                .addParameter(String.class,"filePath")
+                .addParameter(String.class, "labelColName")
+                .returns(datasetRow)
                 .build();
 
-        JavaFile javaFile = JavaFile.builder("autogen", helloWorld)
+        TypeSpec DecisionTree = TypeSpec.classBuilder("DecisionTree")
+                .addModifiers(Modifier.PUBLIC)
+                .addMethod(main)
+                .addMethod(featureExtractionMethod)
+                .build();
+
+        JavaFile javaFile = JavaFile.builder("autogen", DecisionTree)
                 .build();
 
         try {
