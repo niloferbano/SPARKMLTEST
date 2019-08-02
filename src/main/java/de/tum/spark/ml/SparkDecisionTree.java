@@ -12,6 +12,8 @@ import org.apache.spark.sql.SparkSession;
 
 import java.io.IOException;
 
+
+
 public class SparkDecisionTree {
 
     public static void main(String[] args) {
@@ -40,18 +42,23 @@ public class SparkDecisionTree {
         DecisionTreeClassificationModel dtc_model = DecisionTree("entropy",
                 20, 300, training_data);
 
+        Dataset<Row> predictions = dtc_model.transform(test_data);
+        modelEvaluator(predictions);
+        SaveModel("DTC_Model", dtc_model);
+
+        spark.stop();
+    }
+
+    public static void SaveModel(String modelName, DecisionTreeClassificationModel dtc_model) {
+
+
         try {
-            dtc_model.save("/Users/nilu/Downloads/dtc.model");
+            dtc_model.save("/Users/nilu/Downloads/" + modelName+".model");
             throw  new IOException();
         }catch (IOException io){
             System.out.println("Model can not be saved");
         }
-        DecisionTreeClassificationModel sameModel = DecisionTreeClassificationModel.load("/Users/nilu/Downloads/dtc.model");
-        Dataset<Row> predictions = sameModel.transform(test_data);
-        modelEvaluator(predictions);
 
-
-        spark.stop();
     }
 
     public static DecisionTreeClassificationModel DecisionTree(String impurity, int treeDepth,
