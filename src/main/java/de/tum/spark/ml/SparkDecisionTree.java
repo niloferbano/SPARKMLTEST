@@ -118,5 +118,4 @@ public class SparkDecisionTree {
         System.out.println("Accuracy = " + ( accuracy));
     }
 
-
 }
