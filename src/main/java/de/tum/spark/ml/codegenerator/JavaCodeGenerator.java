@@ -1,6 +1,11 @@
 package de.tum.spark.ml.codegenerator;
 
 import com.squareup.javapoet.*;
+import org.apache.spark.ml.classification.DecisionTreeClassificationModel;
+import org.apache.spark.ml.classification.DecisionTreeClassifier;
+import org.apache.spark.ml.feature.VectorAssembler;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
@@ -17,24 +22,46 @@ public class JavaCodeGenerator {
 
     private void generateJavaSource(){
 
-        MethodSpec main = MethodSpec.methodBuilder("main")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(void.class)
-                .addParameter(String[].class, "args")
-                .addCode("        SparkSession sparkSession = SparkSession\n" +
-                        "                .builder()\n" +
-                        "                .appName(\"Test\")\n" +
-                        "                .config(\"spark.master\", \"local\")\n" +
-                        "                .getOrCreate();")
-                .build();
         ParameterizedTypeName datasetRow = ParameterizedTypeName.get(
                 ClassName.get("org.apache.spark.sql", "Dataset"),
                 ClassName.get("org.apache.spark.sql", "Row")
         );
+        ClassName vectorAssembler = ClassName.get("org.apache.spark.ml.feature","VectorAssembler");
+        ClassName sparkSession = ClassName.get("org.apache.spark.sql","SparkSession");
+        ClassName Dataset = ClassName.get("org.apache.spark.sql","Dataset");
+        ClassName decisionTreeClassifier = ClassName.get("org.apache.spark.ml.classification",
+                "DecisionTreeClassifier");
+        ClassName decisionTreeClassifierModel = ClassName.get("org.apache.spark.ml.classification",
+                "DecisionTreeClassificationModel");
+
+        MethodSpec main = MethodSpec.methodBuilder("main")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(void.class)
+                .addParameter(String[].class, "args")
+                .addStatement("$T sparkSession = SparkSession\n" +
+                        ".builder()\n" +
+                        ".appName(\"Test\")\n" +
+                        ".config(\"spark.master\", \"local\")\n" +
+                        ".getOrCreate();", sparkSession)
+                .addStatement("$T df = featureExtraction(sparkSession,\"/Users/nilu/Downloads/covtype.csv\", \"_c54\");", datasetRow)
+                .addStatement("$T features_df = df.drop(\"labelCol\")", datasetRow)
+                .addStatement("$T assembler = new $T().setInputCols(features_df.columns())" +
+                        ".setOutputCol(\"features\");", vectorAssembler,vectorAssembler)
+                .addStatement("$T input_data = assembler.transform(df)",datasetRow )
+                .addStatement("$T[] splits = input_data.randomSplit(new double[]{0.8, 0.2})", Dataset)
+                .addStatement("$T training_data = splits[0]", datasetRow)
+                .addStatement("$T test_data = splits[1]",datasetRow)
+                .addStatement("$T dtc_model = decisionTreeClassificationModel(\"entropy\",\n" +
+                        "20, 300, training_data)", decisionTreeClassifierModel)
+                .addStatement("$T predictions = dtc_model.transform(test_data)", datasetRow)
+                .addStatement("modelEvaluator(predictions)")
+                .addStatement("saveModel(\"DTC_Model\", dtc_model)")
+                .addStatement("sparkSession.stop()")
+                .build();
 
         MethodSpec featureExtractionMethod = MethodSpec.methodBuilder("featureExtraction")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addParameter(ClassName.get("org.apache.spark.sql", "sparkSession"),"sparkSession")
+                .addParameter(sparkSession,"sparkSession")
                 .addParameter(String.class,"filePath")
                 .addParameter(String.class, "labelColName")
                 .addStatement("       Dataset<Row> df = sparkSession.read()\n" +
@@ -69,10 +96,7 @@ public class JavaCodeGenerator {
                 .returns(void.class)
                 .build();
 
-        ClassName decisionTreeClassifier = ClassName.get("org.apache.spark.ml.classification",
-                "DecisionTreeClassifier");
-        ClassName decisionTreeClassifierModel = ClassName.get("org.apache.spark.ml.classification",
-                "DecisionTreeClassificationModel");
+
         CodeBlock codeBlock = CodeBlock.builder()
                 .addStatement("$T dtc = new $T()" +
                         ".setLabelCol(\"labelCol\")\n" +
@@ -97,6 +121,7 @@ public class JavaCodeGenerator {
                         "            }", ioEx, ioEx)
                 .returns(void.class)
                 .build();
+
 
         MethodSpec decisionTreeClassificationModelMethod = MethodSpec.methodBuilder("decisionTreeClassificationModel")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
