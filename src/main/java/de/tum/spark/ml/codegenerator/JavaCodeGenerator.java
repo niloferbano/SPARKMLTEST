@@ -22,6 +22,8 @@ public class JavaCodeGenerator {
 
     private void generateJavaSource(){
 
+        CodeBlock.Builder filePath = CodeBlock.builder().addStatement("String filePath = \"/Users/nilu/Downloads/\"");
+
         ParameterizedTypeName datasetRow = ParameterizedTypeName.get(
                 ClassName.get("org.apache.spark.sql", "Dataset"),
                 ClassName.get("org.apache.spark.sql", "Row")
@@ -38,11 +40,12 @@ public class JavaCodeGenerator {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
                 .addParameter(String[].class, "args")
+                .addCode(filePath.build())
                 .addStatement("$T sparkSession = SparkSession\n" +
                         ".builder()\n" +
                         ".appName(\"Test\")\n" +
                         ".config(\"spark.master\", \"local\")\n" +
-                        ".getOrCreate();", sparkSession)
+                        ".getOrCreate()", sparkSession)
                 .addStatement("$T df = featureExtraction(sparkSession,\"/Users/nilu/Downloads/covtype.csv\", \"_c54\");", datasetRow)
                 .addStatement("$T features_df = df.drop(\"labelCol\")", datasetRow)
                 .addStatement("$T assembler = new $T().setInputCols(features_df.columns())" +
@@ -55,7 +58,7 @@ public class JavaCodeGenerator {
                         "20, 300, training_data)", decisionTreeClassifierModel)
                 .addStatement("$T predictions = dtc_model.transform(test_data)", datasetRow)
                 .addStatement("modelEvaluator(predictions)")
-                .addStatement("saveModel(\"DTC_Model\", dtc_model)")
+                .addStatement("saveModel(\"DTC_Model\", filePath,dtc_model)")
                 .addStatement("sparkSession.stop()")
                 .build();
 
@@ -74,8 +77,9 @@ public class JavaCodeGenerator {
                         "        }\n" +
                         "\n" +
                         "        df = df.withColumnRenamed(labelColName, \"labelCol\");\n" +
-                        "        df = df.withColumn(\"labelCol\", df.col(\"labelCol\").minus(1));" +
-                        "return df")
+                        "        df = df.withColumn(\"labelCol\", df.col(\"labelCol\").minus(1))")
+                .addStatement("return df")
+
                 .returns(datasetRow)
                 .build();
 
@@ -109,16 +113,19 @@ public class JavaCodeGenerator {
                 .build();
 
         ClassName ioEx = ClassName.get(IOException.class);
+
         MethodSpec saveModelMethod  = MethodSpec.methodBuilder("saveModel")
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                 .addParameter(String.class, "modelName")
+                .addParameter(String.class, "filePath")
                 .addParameter(decisionTreeClassifierModel,"dtc_model")
-                .addStatement("     try {\n" +
-                        "                dtc_model.save(\"/Users/nilu/Downloads/\" + modelName+\".model\");\n" +
-                        "                throw  new $T();\n" +
-                        "            }catch ($T io){\n" +
-                        "                System.out.println(\"Model can not be saved\");\n" +
-                        "            }", ioEx, ioEx)
+                .addStatement("try {\n" +
+                        "dtc_model.save(filePath + modelName+\".model\");\n" +
+                        "throw  new $T();\n" +
+                        "}catch ($T io){\n" +
+                        "System.out.println(\"Model can not be saved\");\n" +
+                        "}\n" ,
+                        ioEx, ioEx)
                 .returns(void.class)
                 .build();
 
@@ -140,9 +147,11 @@ public class JavaCodeGenerator {
                 .addMethod(modelEvaluatorMethod)
                 .addMethod(decisionTreeClassificationModelMethod)
                 .addMethod(saveModelMethod)
+
                 .build();
 
         JavaFile javaFile = JavaFile.builder("autogen", DecisionTree)
+
                 .build();
 
         try {

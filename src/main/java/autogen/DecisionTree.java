@@ -12,11 +12,12 @@ import org.apache.spark.sql.SparkSession;
 
 public class DecisionTree {
   public static void main(String[] args) {
+    String filePath = "/Users/nilu/Downloads/";
     SparkSession sparkSession = SparkSession
         .builder()
         .appName("Test")
         .config("spark.master", "local")
-        .getOrCreate();;
+        .getOrCreate();
     Dataset<Row> df = featureExtraction(sparkSession,"/Users/nilu/Downloads/covtype.csv", "_c54");;
     Dataset<Row> features_df = df.drop("labelCol");
     VectorAssembler assembler = new VectorAssembler().setInputCols(features_df.columns()).setOutputCol("features");;
@@ -28,7 +29,7 @@ public class DecisionTree {
         20, 300, training_data);
     Dataset<Row> predictions = dtc_model.transform(test_data);
     modelEvaluator(predictions);
-    saveModel("DTC_Model", dtc_model);
+    saveModel("DTC_Model", filePath,dtc_model);
     sparkSession.stop();
   }
 
@@ -44,7 +45,8 @@ public class DecisionTree {
                 }
 
                 df = df.withColumnRenamed(labelColName, "labelCol");
-                df = df.withColumn("labelCol", df.col("labelCol").minus(1));return df;
+                df = df.withColumn("labelCol", df.col("labelCol").minus(1));
+    return df;
   }
 
   public static void modelEvaluator(Dataset<Row> predictions) {
@@ -67,12 +69,14 @@ public class DecisionTree {
     return dtc_model;
   }
 
-  public static void saveModel(String modelName, DecisionTreeClassificationModel dtc_model) {
-         try {
-                        dtc_model.save("/Users/nilu/Downloads/" + modelName+".model");
-                        throw  new IOException();
-                    }catch (IOException io){
-                        System.out.println("Model can not be saved");
-                    };
+  public static void saveModel(String modelName, String filePath,
+      DecisionTreeClassificationModel dtc_model) {
+    try {
+        dtc_model.save(filePath + modelName+".model");
+        throw  new IOException();
+        }catch (IOException io){
+        System.out.println("Model can not be saved");
+                }
+        ;
   }
 }
