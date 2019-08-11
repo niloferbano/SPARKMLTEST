@@ -1,11 +1,6 @@
 package de.tum.spark.ml.codegenerator;
 
 import com.squareup.javapoet.*;
-import org.apache.spark.ml.classification.DecisionTreeClassificationModel;
-import org.apache.spark.ml.classification.DecisionTreeClassifier;
-import org.apache.spark.ml.feature.VectorAssembler;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
@@ -147,11 +142,9 @@ public class JavaCodeGenerator {
                 .addMethod(modelEvaluatorMethod)
                 .addMethod(decisionTreeClassificationModelMethod)
                 .addMethod(saveModelMethod)
-
                 .build();
 
         JavaFile javaFile = JavaFile.builder("autogen", DecisionTree)
-
                 .build();
 
         try {

@@ -56,6 +56,11 @@
             <artifactId>javapoet</artifactId>
             <version>1.11.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <version>2.5.0.RELEASE</version>
+        </dependency>
 
     </dependencies>
 
