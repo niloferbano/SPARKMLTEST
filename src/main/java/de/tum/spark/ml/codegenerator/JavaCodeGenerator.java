@@ -62,19 +62,15 @@ public class JavaCodeGenerator {
                 .addParameter(sparkSession,"sparkSession")
                 .addParameter(String.class,"filePath")
                 .addParameter(String.class, "labelColName")
-                .addStatement("       Dataset<Row> df = sparkSession.read()\n" +
+                .addStatement("       $T df = sparkSession.read()\n" +
                         "                .option(\"header\", false)\n" +
-                        "                .option(\"inferSchema\", true).csv(filePath);\n" +
-                        "\n" +
-                        "        for (String c : df.columns()) {\n" +
-                        "            df = df.withColumn(c, df.col(c).cast(\"double\"));\n" +
-                        "\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        df = df.withColumnRenamed(labelColName, \"labelCol\");\n" +
-                        "        df = df.withColumn(\"labelCol\", df.col(\"labelCol\").minus(1))")
+                        "                .option(\"inferSchema\", true).csv(filePath)", datasetRow)
+                .beginControlFlow("for(String c:  df.columns())")
+                .addStatement("df = df.withColumn(c, df.col(c).cast(\"double\"))")
+                .endControlFlow()
+                .addStatement("df = df.withColumnRenamed(labelColName, \"labelCol\")")
+                .addStatement("df = df.withColumn(\"labelCol\", df.col(\"labelCol\").minus(1))")
                 .addStatement("return df")
-
                 .returns(datasetRow)
                 .build();
 
@@ -86,15 +82,28 @@ public class JavaCodeGenerator {
                 .addStatement("$T evaluator = new $T().setLabelCol(\"labelCol\")" +
                         ".setPredictionCol(\"prediction\")\n" +
                         ".setMetricName(\"accuracy\")", multiclassClassificationEvaluator, multiclassClassificationEvaluator)
-                .addStatement(
-                        "double accuracy = evaluator.evaluate(predictions);\n" +
-                                "predictions.select(\"prediction\", \"labelCol\", \"features\").show(10);\n" +
-                                "\n" +
-                                "System.out.println(\"Accuracy = \" + ( accuracy));")
-
+                .addStatement("double accuracy = evaluator.evaluate(predictions)")
+                .addStatement("$T.out.printf($S,$N)", System.class, "Accuracy = %f","accuracy")
                 .returns(void.class)
                 .build();
 
+
+
+
+        ClassName ioEx = ClassName.get(IOException.class);
+
+        MethodSpec saveModelMethod = MethodSpec.methodBuilder("saveModel")
+                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                .addParameter(String.class, "modelName")
+                .addParameter(String.class, "filePath")
+                .addParameter(decisionTreeClassifierModel, "dtc_model")
+                .beginControlFlow("try")
+                .addStatement("dtc_model.save(filePath + modelName+\".model\")")
+                .addStatement("$T.out.println($S)", System.class, "Model successfully saved")
+                .nextControlFlow("catch ($T io)", ioEx)
+                .addStatement("$T.out.println($S)", System.class, "Model can not be saved")
+                .endControlFlow()
+                .build();
 
         CodeBlock codeBlock = CodeBlock.builder()
                 .addStatement("$T dtc = new $T()" +
@@ -106,24 +115,6 @@ public class JavaCodeGenerator {
                 .addStatement("$T dtc_model = dtc.fit(training_data)", decisionTreeClassifierModel)
                 .addStatement("return dtc_model")
                 .build();
-
-        ClassName ioEx = ClassName.get(IOException.class);
-
-        MethodSpec saveModelMethod  = MethodSpec.methodBuilder("saveModel")
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .addParameter(String.class, "modelName")
-                .addParameter(String.class, "filePath")
-                .addParameter(decisionTreeClassifierModel,"dtc_model")
-                .addStatement("try {\n" +
-                        "dtc_model.save(filePath + modelName+\".model\");\n" +
-                        "throw  new $T();\n" +
-                        "}catch ($T io){\n" +
-                        "System.out.println(\"Model can not be saved\");\n" +
-                        "}\n" ,
-                        ioEx, ioEx)
-                .returns(void.class)
-                .build();
-
 
         MethodSpec decisionTreeClassificationModelMethod = MethodSpec.methodBuilder("decisionTreeClassificationModel")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)

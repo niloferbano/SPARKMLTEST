@@ -49,11 +49,8 @@ public class SparkDecisionTree {
     }
 
     public static void SaveModel(String modelName, DecisionTreeClassificationModel dtc_model) {
-
-
         try {
             dtc_model.save("/Users/nilu/Downloads/" + modelName+".model");
-            throw  new IOException();
         }catch (IOException io){
             System.out.println("Model can not be saved");
         }
