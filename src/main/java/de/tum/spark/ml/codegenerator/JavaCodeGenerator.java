@@ -8,8 +8,6 @@ import java.nio.file.Paths;
 
 public class JavaCodeGenerator {
 
-
-
     public static void main(String[] args) {
         JavaCodeGenerator tutorial = new JavaCodeGenerator();
         tutorial.generateJavaSource();
@@ -139,7 +137,7 @@ public class JavaCodeGenerator {
                 .build();
 
         try {
-            javaFile.writeTo(Paths.get("./src/main/java"));//root maven source
+            javaFile.writeTo(Paths.get("./src/main/java"));
         } catch (IOException ex) {
             System.out.println("An exception! " + ex.getMessage());
         }

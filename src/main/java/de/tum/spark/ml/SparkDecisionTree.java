@@ -19,7 +19,7 @@ public class SparkDecisionTree {
 
         SparkSession spark = SparkSession
                 .builder()
-                .appName("Test")
+                .appName("DecisionTree")
                 .config("spark.master", "local")
                 .getOrCreate();
 
