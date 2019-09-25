@@ -9,8 +9,8 @@ import org.apache.spark.ml.feature.VectorAssembler;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import java.io.IOException;
 
+import java.io.IOException;
 
 
 public class SparkDecisionTree {
@@ -21,10 +21,11 @@ public class SparkDecisionTree {
                 .builder()
                 .appName("DecisionTree")
                 .config("spark.master", "local")
+                .config("spark.driver.bindAddress", "127.0.0.1")
                 .getOrCreate();
 
 
-        Dataset<Row> df = featureExtraction(spark,"/Users/nilu/Downloads/covtype.csv", "_c54");
+        Dataset<Row> df = featureExtraction(spark, "/Users/coworker/Downloads/covtype.data", "_c54");
 
         Dataset<Row> features_df = df.drop("labelCol");
         //Dataset<Row> target_df = df.select("labelCol");
@@ -33,7 +34,6 @@ public class SparkDecisionTree {
         VectorAssembler assembler = new VectorAssembler().setInputCols(features_df.columns()).setOutputCol("features");
         Dataset<Row> input_data = assembler.transform(df);
 
-        input_data.take(10);
         Dataset[] splits = input_data.randomSplit(new double[]{0.8, 0.2});
         Dataset<Row> training_data = splits[0];
         Dataset<Row> test_data = splits[1];
@@ -50,8 +50,8 @@ public class SparkDecisionTree {
 
     public static void SaveModel(String modelName, DecisionTreeClassificationModel dtc_model) {
         try {
-            dtc_model.save("/Users/nilu/Downloads/" + modelName+".model");
-        }catch (IOException io){
+            dtc_model.save("/Users/coworker/Downloads/" + modelName + ".model");
+        } catch (IOException io) {
             System.out.println("Model can not be saved");
         }
 
@@ -73,8 +73,8 @@ public class SparkDecisionTree {
     }
 
     public static RandomForestClassificationModel RandomTree(String impurity, int treeDepth,
-                                                               int maxBins,
-                                                               Dataset<Row> training_data) {
+                                                             int maxBins,
+                                                             Dataset<Row> training_data) {
         RandomForestClassifier rfc = new RandomForestClassifier()
                 .setLabelCol("labelCol")
                 .setFeaturesCol("features")
@@ -111,7 +111,7 @@ public class SparkDecisionTree {
         double accuracy = evaluator.evaluate(predictions);
         predictions.select("prediction", "labelCol", "features").show(10);
 
-        System.out.println("Accuracy = " + ( accuracy));
+        System.out.println("Accuracy = " + (accuracy));
     }
 
 }

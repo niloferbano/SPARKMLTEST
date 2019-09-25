@@ -31,7 +31,7 @@ public class SparkKMeansClustering {
                 .option("header", false)
                 .option("inferSchema", true)
                 .option("partition", 4)
-                .csv("/Users/nilu/Downloads/kddcup.data");
+                .csv("/Users/coworker/Downloads/kddcup.data");
 
 
 
@@ -53,19 +53,19 @@ public class SparkKMeansClustering {
         for (String c : df.columns()) {
             df = df.withColumn(c, df.col(c).cast("double"));
         }
-        Dataset<Row> final_data = df.persist(StorageLevel.MEMORY_AND_DISK_2());
-        String[] cols = final_data.columns();
+        //Dataset<Row> final_data = df.persist(StorageLevel.MEMORY_AND_DISK_2());
+        String[] cols = df.columns();
         System.out.println(cols);
-        VectorAssembler assembler = new VectorAssembler().setInputCols(final_data.columns()).setOutputCol("features");
-        final_data = final_data.crossJoin(target_df);
-        Dataset<Row> input_data = assembler.transform(final_data);
-        final_data = input_data.persist(StorageLevel.MEMORY_AND_DISK());
+        VectorAssembler assembler = new VectorAssembler().setInputCols(df.columns()).setOutputCol("features");
+        df = df.crossJoin(target_df);
+        Dataset<Row> input_data = assembler.transform(df);
+        //df = input_data.persist(StorageLevel.MEMORY_AND_DISK());
 
         System.out.println("******Starting KMeans calculations*******" );
-        KMeans kmeans = new KMeans().setFeaturesCol("features").setK(23).setSeed(1L);
-        KMeansModel model = kmeans.fit(final_data);
+        KMeans kmeans = new KMeans().setFeaturesCol("features").setK(23);
+        KMeansModel model = kmeans.fit(input_data);
 
-        double WSSSE = model.computeCost(final_data);
+        double WSSSE = model.computeCost(df);
         System.out.println("Within Set Sum of Squared Errors = " + WSSSE);
     }
 
