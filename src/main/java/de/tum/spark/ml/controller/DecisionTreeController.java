@@ -1,7 +1,6 @@
 package de.tum.spark.ml.controller;
 
-import de.tum.spark.ml.model.decisionTreeModel.DecisionTreeDto;
-import de.tum.spark.ml.repository.DecisionTreeJobRepository;
+import de.tum.spark.ml.model.decisionTreeModel.DecisionTree;
 import de.tum.spark.ml.service.DecisionTreeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +17,11 @@ public class DecisionTreeController {
     private DecisionTreeService decisionTreeService;
 
     @RequestMapping(value = "/runModel", method = RequestMethod.POST)
-    public DecisionTreeDto getTrainingData(@RequestBody DecisionTreeDto decisionTreeDto) throws IOException {
-        System.out.println("========> In Controller: " + decisionTreeDto.getFeatureExtractionMapper().toString());
-        DecisionTreeDto decisionTree = decisionTreeDto;
-        DecisionTreeDto decisionTreeDto1 = decisionTreeService.save(decisionTree);
+    public DecisionTree getTrainingData(@RequestBody DecisionTree decisionTreeDto) throws IOException {
+        System.out.println("========> In Controller: " + decisionTreeDto.getFeatureExtractionDto().toString());
+        DecisionTree decisionTree = decisionTreeDto;
+        DecisionTree decisionTree1 = decisionTreeService.save(decisionTree);
         decisionTreeService.generateCode(decisionTree);
-        return decisionTreeDto1;
+        return decisionTree1;
     }
 }

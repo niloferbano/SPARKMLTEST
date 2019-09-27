@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class TrainModelMapper {
+public class DTTrainModelDto {
     @NotNull
     @NotEmpty(message = "impurity should not be empty")
     private String impurity;

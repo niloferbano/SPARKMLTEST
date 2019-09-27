@@ -6,23 +6,23 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
-import de.tum.spark.ml.model.decisionTreeModel.FeatureExtractionMapper;
-import org.apache.spark.sql.SparkSession;
-import org.codehaus.janino.Java;
+import de.tum.spark.ml.model.decisionTreeModel.FeatureExtractionDto;
 
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FeatureExtraction {
 
-    public static InputOutputMapper getJavaCode(InputOutputMapper inputOutputMapper, FeatureExtractionMapper featureExtractionMapper, JavaCodeGenerator javaCodeGenerator) {
+    public static InputOutputMapper getJavaCode(InputOutputMapper inputOutputMapper, FeatureExtractionDto featureExtractionDto, JavaCodeGenerator javaCodeGenerator) {
 
 
         ParameterizedTypeName datasetRow = ParameterizedTypeName.get(
                 ClassName.get("org.apache.spark.sql", "Dataset"),
                 ClassName.get("org.apache.spark.sql", "Row")
         );
+
         ClassName vectorAssembler = ClassName.get("org.apache.spark.ml.feature", "VectorAssembler");
 
         CodeBlock.Builder code = CodeBlock.builder();
@@ -35,20 +35,41 @@ public class FeatureExtraction {
         codeVariables.put("inputDataVariable", JavaCodeGenerator.newVariableName());
         codeVariables.put("vectorAssemblerVariable", JavaCodeGenerator.newVariableName());
         codeVariables.put("sparkSession", inputOutputMapper.getVariableName());
-        codeVariables.put("filePath", featureExtractionMapper.getFilePath());
+        codeVariables.put("filePath", featureExtractionDto.getFilePath());
         codeVariables.put("filePathVariable", JavaCodeGenerator.newVariableName());
-        codeVariables.put("labelColName", featureExtractionMapper.getLabledCol());
+        codeVariables.put("labelColName", featureExtractionDto.getLabledCol());
         codeVariables.put("labelColNameVariable", JavaCodeGenerator.newVariableName());
 
 
         code.addNamed("$sourceType:T $variable:L = $sparkSession:L.read()" +
                 ".option(\"header\", false)" +
                 ".option(\"inferSchema\", true).csv($filePathVariable:L);\n", codeVariables);
+
+        //Machine learning algorithm can not applied to string value.remove the string columns.
+        if (featureExtractionDto.getColWithString() != null) {
+            codeVariables.put("removeCol", featureExtractionDto.getColWithString());
+
+            for (String col : featureExtractionDto.getColWithString()) {
+                code.beginControlFlow("for(String col: $L.columns())", codeVariables.get("removeCol"));
+                code.addStatement("$L = $L.drop(col)", codeVariables.get("variable"), codeVariables.get("variable"));
+                code.endControlFlow();
+            }
+        }
+
         code.beginControlFlow("for(String c:  $L.columns())", codeVariables.get("variable"));
+        if(javaCodeGenerator.getClassName().contains("KMeans")) {
+            code.addStatement("if(c.equals($L))", codeVariables.get("labelColName"));
+            code.addStatement("{continue;}");
+        }
         code.addStatement("$L = $L.withColumn(c, $L.col(c).cast(\"double\"))", codeVariables.get("variable"), codeVariables.get("variable"), codeVariables.get("variable"));
         code.endControlFlow();
         code.addNamed("$variable:L = $variable:L.withColumnRenamed($labelColNameVariable:L, $constant:L);\n", codeVariables);
-        code.addNamed("$variable:L = $variable:L.withColumn(\"labelCol\", $variable:L.col($constant:L).minus(1));\n", codeVariables);
+
+        //DecisionTree needs labels starting at 0; subtract 1
+        if(javaCodeGenerator.getClassName().contains("DecisionTree")) {
+            code.addNamed("$variable:L = $variable:L.withColumn(\"labelCol\", $variable:L.col($constant:L).minus(1));\n", codeVariables);
+        }
+
 
         code.addNamed("$sourceType:T $featuresdfVariable:L = $variable:L.drop($constant:L);\n", codeVariables);
         code.addNamed("$vectorAssembler:T $vectorAssemblerVariable:L = new $vectorAssembler:T()" +
@@ -56,6 +77,7 @@ public class FeatureExtraction {
                 ".setOutputCol(\"features\");\n", codeVariables);
         code.addNamed("$sourceType:T $inputDataVariable:L = $vectorAssemblerVariable:L.transform($variable:L);\n", codeVariables);
         code.addNamed("return $inputDataVariable:L;\n", codeVariables);
+
 
         MethodSpec featureExtractionMethod = MethodSpec.methodBuilder("featureExtraction")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)

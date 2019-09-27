@@ -5,7 +5,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
-import de.tum.spark.ml.model.decisionTreeModel.SaveModelMapper;
+import de.tum.spark.ml.model.decisionTreeModel.SaveModelDto;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
@@ -13,16 +13,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SaveModel {
-    public static void getJavaCode(SaveModelMapper saveModelMapper, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
+    public static void getJavaCode(SaveModelDto saveModelDto, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
 
         ClassName ioEx = ClassName.get(IOException.class);
 
         CodeBlock.Builder code = CodeBlock.builder();
         Map<String, Object> codeVariables = new LinkedHashMap<>();
         codeVariables.put("model", inputOutputMapper.getVariableName());
-        codeVariables.put("filePath", saveModelMapper.getFilePath());
+        codeVariables.put("filePath", saveModelDto.getFilePath());
         codeVariables.put("filePathVariable", JavaCodeGenerator.newVariableName());
-        codeVariables.put("modelName", saveModelMapper.getModelName());
+        codeVariables.put("modelName", saveModelDto.getModelName());
         MethodSpec saveModelMethod = MethodSpec.methodBuilder("saveModel")
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                 .addParameter(String.class, codeVariables.get("modelName").toString())

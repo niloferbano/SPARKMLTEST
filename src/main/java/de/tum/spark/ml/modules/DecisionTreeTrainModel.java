@@ -3,18 +3,15 @@ package de.tum.spark.ml.modules;
 import com.squareup.javapoet.*;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
-import de.tum.spark.ml.model.decisionTreeModel.FeatureExtractionMapper;
-import de.tum.spark.ml.model.decisionTreeModel.TrainModelMapper;
-import org.apache.spark.sql.SparkSession;
-import org.codehaus.janino.Java;
+import de.tum.spark.ml.model.decisionTreeModel.DTTrainModelDto;
 
 import javax.lang.model.element.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TrainModel {
+public class DecisionTreeTrainModel {
 
-    public static InputOutputMapper getJavaCode(TrainModelMapper trainModelMapper, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
+    public static InputOutputMapper getJavaCode(DTTrainModelDto DTTrainModelDto, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
         ParameterizedTypeName datasetRow = ParameterizedTypeName.get(
                 ClassName.get("org.apache.spark.sql", "Dataset"),
                 ClassName.get("org.apache.spark.sql", "Row")
@@ -32,9 +29,9 @@ public class TrainModel {
         codeVariables.put("constant", "\"labelCol\"");
         codeVariables.put("variabledtcmodel", JavaCodeGenerator.newVariableName());
         codeVariables.put("classifierModel", decisionTreeClassifierModel);
-        codeVariables.put("depth", trainModelMapper.getDepth());
-        codeVariables.put("impurity", trainModelMapper.getImpurity());
-        codeVariables.put("maxBins", trainModelMapper.getMaxBins());
+        codeVariables.put("depth", DTTrainModelDto.getDepth());
+        codeVariables.put("impurity", DTTrainModelDto.getImpurity());
+        codeVariables.put("maxBins", DTTrainModelDto.getMaxBins());
         codeVariables.put("trainingData", inputOutputMapper.getVariableName());
         codeVariables.put("depthParam", "depth");
         codeVariables.put("impurityParam", "impurity");

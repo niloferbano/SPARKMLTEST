@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SaveModelMapper {
+public class SaveModelDto {
 
     private String filePath;
     private String modelName;

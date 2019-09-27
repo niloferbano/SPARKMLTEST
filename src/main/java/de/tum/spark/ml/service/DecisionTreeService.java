@@ -4,10 +4,10 @@ import com.squareup.javapoet.ClassName;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
 import de.tum.spark.ml.codegenerator.MavenBuild;
-import de.tum.spark.ml.model.decisionTreeModel.DecisionTreeDto;
+import de.tum.spark.ml.model.decisionTreeModel.DecisionTree;
 import de.tum.spark.ml.modules.FeatureExtraction;
 import de.tum.spark.ml.modules.SaveModel;
-import de.tum.spark.ml.modules.TrainModel;
+import de.tum.spark.ml.modules.DecisionTreeTrainModel;
 import de.tum.spark.ml.repository.DecisionTreeJobRepository;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,10 @@ public class DecisionTreeService {
 
     @Autowired
     private DecisionTreeJobRepository decisionTreeJobRepository;
-    private String DECISION_TREE_PROJECT_PATH = "decisontree";
+    private static final  String DECISION_TREE_PROJECT_PATH = "decisontree";
+    private static final  String APP_NAME = "DecisionTree";
 
-    public void generateCode(DecisionTreeDto decisionTreeDto) throws IOException {
+    public void generateCode(DecisionTree decisionTree) throws IOException {
         Map<String, Object> codeVariables = new LinkedHashMap<>();
         ClassName sparkSession = ClassName.get("org.apache.spark.sql", "SparkSession");
 
@@ -34,7 +35,7 @@ public class DecisionTreeService {
                 outputPath, DECISION_TREE_PROJECT_PATH);
         String codePath = String.join(File.separator,
                 projectPath, "src", "main", "java");
-        JavaCodeGenerator javaCodeGenerator = new JavaCodeGenerator(codePath, "DecisionTree", "de.tum.in.sparkml");
+        JavaCodeGenerator javaCodeGenerator = new JavaCodeGenerator(codePath, APP_NAME, "de.tum.in.sparkml");
 
         codeVariables.put("sparkSession", sparkSession);
         codeVariables.put("sessionName", JavaCodeGenerator.newVariableName());
@@ -48,10 +49,10 @@ public class DecisionTreeService {
                         ".getOrCreate();\n", codeVariables)
                 .addStatement("$T.out.println($S)", System.class, "=====******Spark Started*******=====");
 
-        InputOutputMapper inputOutputMapper = FeatureExtraction.getJavaCode(new InputOutputMapper(sparkSession, codeVariables.get("sessionName").toString()), decisionTreeDto.getFeatureExtractionMapper(), javaCodeGenerator);
+        InputOutputMapper inputOutputMapper = FeatureExtraction.getJavaCode(new InputOutputMapper(sparkSession, codeVariables.get("sessionName").toString()), decisionTree.getFeatureExtractionDto(), javaCodeGenerator);
         ClassName Dataset = ClassName.get("org.apache.spark.sql", "Dataset");
-        double trainSplit = decisionTreeDto.getTrainModelMapper().getTraining_size();
-        double testSplit = decisionTreeDto.getTrainModelMapper().getTest_size();
+        double trainSplit = decisionTree.getDTTrainModelDto().getTraining_size();
+        double testSplit = decisionTree.getDTTrainModelDto().getTest_size();
 
         codeVariables.put("splits", JavaCodeGenerator.newVariableName());
         codeVariables.put("trainingData", JavaCodeGenerator.newVariableName());
@@ -68,7 +69,7 @@ public class DecisionTreeService {
                 .addNamedCode("$datasetRowType:T $testData:L = $splits:L[1];\n", codeVariables);
 
         inputOutputMapper.setVariableName(codeVariables.get("trainingData").toString());
-        inputOutputMapper = TrainModel.getJavaCode(decisionTreeDto.getTrainModelMapper(), javaCodeGenerator, inputOutputMapper);
+        inputOutputMapper = DecisionTreeTrainModel.getJavaCode(decisionTree.getDTTrainModelDto(), javaCodeGenerator, inputOutputMapper);
 
         ClassName multiclassClassificationEvaluator = ClassName.get("org.apache.spark.ml.evaluation", "MulticlassClassificationEvaluator");
         codeVariables.put("modelType", inputOutputMapper.getVariableTypeName());
@@ -87,7 +88,7 @@ public class DecisionTreeService {
                 .addNamedCode("double $accuracy:L = $evaluator:L.evaluate($prediction:L);\n", codeVariables)
                 .addStatement("$T.out.printf($S,$N)", System.class, "Accuracy = %f", codeVariables.get("accuracy"));
 
-        SaveModel.getJavaCode(decisionTreeDto.getSaveModelMapper(), javaCodeGenerator, inputOutputMapper);
+        SaveModel.getJavaCode(decisionTree.getSaveModelDto(), javaCodeGenerator, inputOutputMapper);
         javaCodeGenerator.getMainMethod()
                 .addNamedCode("$sessionName:L.stop();\n", codeVariables);
         System.out.println(System.getProperty("user.dir"));
@@ -102,14 +103,14 @@ public class DecisionTreeService {
         }
     }
 
-    public DecisionTreeDto save(DecisionTreeDto decisionTreeDto) {
-        String modelName = decisionTreeDto.getModelName();
-        DecisionTreeDto exist = decisionTreeJobRepository.findByModelName(modelName);
+    public DecisionTree save(DecisionTree decisionTree) {
+        String modelName = decisionTree.getModelName();
+        DecisionTree exist = decisionTreeJobRepository.findByModelName(modelName);
 
         if (exist != null) {
-            return decisionTreeDto;
+            return decisionTree;
         } else {
-            return decisionTreeJobRepository.save(decisionTreeDto);
+            return decisionTreeJobRepository.save(decisionTree);
         }
 
     }
