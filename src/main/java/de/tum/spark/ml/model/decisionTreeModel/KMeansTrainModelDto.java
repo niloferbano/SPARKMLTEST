@@ -8,18 +8,14 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class KMeansTrainModelDto {
+
     @NotNull
     private Integer lowK;
-
     private Integer highK;
-
     private Integer maxIter;
-
-    private Long seed;
+    private Double seed;
     private Integer steps;
     private String initMode;
     private Boolean scaleFeature;
     private Boolean withStd;
-
-
 }

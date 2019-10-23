@@ -1,10 +1,7 @@
 package de.tum.spark.ml.codegenerator;
 
 
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.RandomStringUtils;
@@ -57,7 +54,10 @@ public class JavaCodeGenerator {
         this.generatedClassName.addMethod(this.getMainMethod().build());
 
 
-        JavaFile javaFile = JavaFile.builder(this.getPackageName(), this.getGeneratedClassName().build()).build();
+        JavaFile javaFile = JavaFile.builder(this.getPackageName(), this.getGeneratedClassName().build())
+                .addStaticImport(ClassName.get("java.util.Map","Entry"),"comparingByValue")
+                .addStaticImport(ClassName.get("java.util.stream","Collectors"),"toMap")
+                .build();
 
         try {
             javaFile.writeTo(Paths.get(this.getOutputPath()));

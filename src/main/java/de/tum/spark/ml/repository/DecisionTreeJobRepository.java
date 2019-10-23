@@ -4,6 +4,6 @@ import de.tum.spark.ml.model.decisionTreeModel.DecisionTree;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 
-public interface DecisionTreeJobRepository extends MongoRepository<DecisionTree, Long> {
+public interface DecisionTreeJobRepository extends MongoRepository<DecisionTree, String> {
     public DecisionTree findByModelName(String name);
 }

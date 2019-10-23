@@ -2,6 +2,7 @@ package de.tum.spark.ml.modules;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
 
@@ -17,17 +18,17 @@ public class SetUpSparkSession {
         codeVariables.put("sparkSession", sparkSession);
         codeVariables.put("sessionName", JavaCodeGenerator.newVariableName());
         codeVariables.put("appName", appName);
-        code.addNamed("$sparkSession:T $sessionName:L = $sparkSession:T" +
-                ".builder()\n" +
-                ".appName($appName:S)\n", codeVariables);
+
+        code.addNamed("$sparkSession:T $sessionName:L = $sparkSession:T.builder().appName($appName:S)", codeVariables);
+
         sparkConfig.forEach((key, value) -> {
             Map<String, String> codeConfig = new LinkedHashMap<>();
             codeConfig.put("key", key);
             codeConfig.put("value", value);
 
-            code.addNamed(".config($key:S, $value:S)", codeConfig);
+            code.addNamed(".config($key:S, $value:S)\n", codeConfig);
         });
-        code.addNamed(".getOrCreate();\n", codeVariables);
+        code.add(".getOrCreate();\n", codeVariables);
 
         javaCodeGenerator.getMainMethod().addCode(code.build());
 

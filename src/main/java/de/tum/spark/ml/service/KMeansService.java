@@ -6,8 +6,11 @@ import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
 import de.tum.spark.ml.model.decisionTreeModel.KMeansClustering;
 import de.tum.spark.ml.modules.FeatureExtraction;
+import de.tum.spark.ml.modules.KMeansTrainModel;
+import de.tum.spark.ml.modules.SaveModel;
 import de.tum.spark.ml.modules.SetUpSparkSession;
 import de.tum.spark.ml.repository.KMeansRepository;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +48,9 @@ public class KMeansService {
                 projectPath, "src", "main", "java");
         JavaCodeGenerator javaCodeGenerator = new JavaCodeGenerator(codePath, APP_NAME, "de.tum.in.sparkml");
         InputOutputMapper inputOutputMapper = SetUpSparkSession.getSparkSession("KMeans", sparkConfig, javaCodeGenerator);
+        codeVariables.put("sessionName",inputOutputMapper.getVariableName());
 
-        inputOutputMapper = FeatureExtraction.getJavaCode(inputOutputMapper, kMeansClustering.getFeatureExtractionDto(), javaCodeGenerator);
+        inputOutputMapper = FeatureExtraction.getJavaCode(inputOutputMapper, kMeansClustering.getFeatureExtraction(), javaCodeGenerator);
 
 
         //Scaling the input features
@@ -65,15 +69,15 @@ public class KMeansService {
         codeVariables.put("datasetRow", datasetRow);
         codeVariables.put("finalClusteringData", JavaCodeGenerator.newVariableName());
         codeVariables.put("inputDataVariable", inputOutputMapper.getVariableName());
-        codeVariables.put("storageLevel", ClassName.get("rg.apache.spark.storage", "StorageLevel"));
+        codeVariables.put("storageLevel", ClassName.get("org.apache.spark.storage", "StorageLevel"));
 
-        if (kMeansClustering.getKMeansTrainModelDto().getScaleFeature()) {
+        if (kMeansClustering.getKMeansTrainModel().getScaleFeature()) {
             javaCodeGenerator.getMainMethod()
-                    .addNamedCode("$standardScalar:T $standardScalarVariable:L = new $standardScalar()" +
+                    .addNamedCode("$standardScalar:T $standardScalarVariable:L = new $standardScalar:T()" +
                                     ".setInputCol(\"featueres\")" +
                                     ".setOutputCol(\"scaledFeatures\")",
                             codeVariables);
-            if (kMeansClustering.getKMeansTrainModelDto().getWithStd()) {
+            if (kMeansClustering.getKMeansTrainModel().getWithStd()) {
                 javaCodeGenerator.getMainMethod()
                         .addStatement(".setWithStd(true)\n");
             } else {
@@ -84,11 +88,32 @@ public class KMeansService {
             javaCodeGenerator.getMainMethod()
                     .addNamedCode("$standardScalarModel:T $standardScalarModelVariable:L = $standardScalarVariable:L.fit($inputDataVariable:L);\n", codeVariables)
                     .addNamedCode("$datasetRow:T $finalClusteringData:L = " +
-                            " $standardScalarModelVariable:L.transform($inputDataVariable:L).persist($storageLevel.MEMORY_ONLY());\n", codeVariables);
+                            " $standardScalarModelVariable:L.transform($inputDataVariable:L).persist($storageLevel:T.MEMORY_ONLY());\n", codeVariables);
             inputOutputMapper.setVariableName(codeVariables.get("finalClusteringData").toString());
+
+            inputOutputMapper = KMeansTrainModel.getJaveCode(kMeansClustering.getKMeansTrainModel(), javaCodeGenerator, inputOutputMapper);
+
+            SaveModel.getJavaCode(kMeansClustering.getSaveModel(), javaCodeGenerator, inputOutputMapper);
+            javaCodeGenerator.getMainMethod()
+                    .addNamedCode("$sessionName:L.stop();\n", codeVariables);
+            System.out.println(System.getProperty("user.dir"));
+            FileUtils.copyFileToDirectory(new File(System.getProperty("user.dir") + "/src/main/resources/spark-sample-pom/pom.xml"), new File(projectPath));
+            javaCodeGenerator.generateJaveClassFile();
+
         }
 
     }
 
+    public KMeansClustering save(KMeansClustering kMeansClustering) {
+        String modelName = kMeansClustering.getModelName();
+        KMeansClustering exist = kMeansRepository.findByModelName(modelName);
+
+        if (exist != null) {
+            return kMeansClustering;
+        } else {
+            return kMeansRepository.save(kMeansClustering);
+        }
+
+    }
 
 }

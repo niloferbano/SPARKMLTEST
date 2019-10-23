@@ -16,20 +16,22 @@ import javax.validation.constraints.NotNull;
 public class DecisionTree {
 
     @Id
-    private Long id;
+    private String id;
     @Column(unique = true)
     @Field("ModelName")
     private String modelName;
 
     @Field("FeatureExtraction")
-    private FeatureExtractionDto featureExtractionDto;
+    private FeatureExtractionDto featureExtraction;
     @NotNull
     @Field("TrainModelParameters")
-    private DTTrainModelDto DTTrainModelDto;
+    private DTTrainModelDto dtTrainModel;
+
+    private KMeansTrainModelDto kMeansTrainModelDto;
 
     @NotNull
     @Field("SaveModel")
-    private SaveModelDto saveModelDto;
+    private SaveModelDto saveModel;
 
 
     private DecisionTree() {
@@ -43,9 +45,9 @@ public class DecisionTree {
         } else {
             this.modelName = modelName;
         }
-        this.featureExtractionDto = featureExtractionDto;
-        this.DTTrainModelDto = DTTrainModelDto;
-        this.saveModelDto = saveModelDto;
+        this.setFeatureExtraction(featureExtractionDto);
+        this.setDtTrainModel(DTTrainModelDto);
+        this.setSaveModel(saveModelDto);
     }
 
 

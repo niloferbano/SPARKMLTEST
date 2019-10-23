@@ -15,4 +15,5 @@ public class DTTrainModelDto {
     private Integer maxBins;
     private Double training_size;
     private Double test_size;
+
 }

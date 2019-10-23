@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,10 +12,10 @@ public class FeatureExtractionDto {
 
     private String filePath;
     private String labledCol;
-    private ArrayList<String> colWithString;
+    private List<String> colWithString;
 
-    @Override
-    public String toString() {
-        return "filepath: " + filePath + " labledCol: " + labledCol;
+    public FeatureExtractionDto() {
+        this.colWithString = new ArrayList<>();
     }
+
 }
