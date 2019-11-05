@@ -5,7 +5,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
-import de.tum.spark.ml.model.decisionTreeModel.SaveModelDto;
+import de.tum.spark.ml.model.SaveModelDto;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SaveModel {
-    public static void getJavaCode(SaveModelDto saveModelDto, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
+    public static String getJavaCode(SaveModelDto saveModelDto, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
 
         ClassName ioEx = ClassName.get(IOException.class);
 
@@ -36,5 +36,7 @@ public class SaveModel {
                 .endControlFlow()
                 .build();
         javaCodeGenerator.addMethod(saveModelMethod);
+
+        return "saveModel";
     }
 }

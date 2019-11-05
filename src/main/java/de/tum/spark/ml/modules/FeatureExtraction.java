@@ -3,12 +3,11 @@ package de.tum.spark.ml.modules;
 import com.squareup.javapoet.*;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
-import de.tum.spark.ml.model.decisionTreeModel.FeatureExtractionDto;
+import de.tum.spark.ml.model.FeatureExtractionDto;
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class FeatureExtraction {
@@ -49,7 +48,7 @@ public class FeatureExtraction {
                 ".option(\"header\", false)" +
                 ".option(\"inferSchema\", true).csv($filePathVariable:L);\n", codeVariables);
 
-        //Machine learning algorithm can not applied to string value.remove the string columns.
+        //Machine learning algorithm can not be applied to string value.remove the string columns.
         if (featureExtractionDto.getColWithString() != null) {
             code.beginControlFlow("for(String col: $L)", codeVariables.get("removeCol"));
 

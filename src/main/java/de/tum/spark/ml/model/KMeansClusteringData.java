@@ -1,9 +1,7 @@
-package de.tum.spark.ml.model.decisionTreeModel;
+package de.tum.spark.ml.model;
 
-import de.tum.spark.ml.modules.SaveModel;
 import lombok.Getter;
 import lombok.Setter;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 @Getter
 @Setter

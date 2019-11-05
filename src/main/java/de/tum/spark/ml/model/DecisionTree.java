@@ -1,4 +1,4 @@
-package de.tum.spark.ml.model.decisionTreeModel;
+package de.tum.spark.ml.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 @Getter
@@ -25,9 +27,8 @@ public class DecisionTree {
     private FeatureExtractionDto featureExtraction;
     @NotNull
     @Field("TrainModelParameters")
-    private DTTrainModelDto dtTrainModel;
+    private DTTrainModelDto trainModel;
 
-    private KMeansTrainModelDto kMeansTrainModelDto;
 
     @NotNull
     @Field("SaveModel")
@@ -46,8 +47,23 @@ public class DecisionTree {
             this.modelName = modelName;
         }
         this.setFeatureExtraction(featureExtractionDto);
-        this.setDtTrainModel(DTTrainModelDto);
+        this.setTrainModel(DTTrainModelDto);
         this.setSaveModel(saveModelDto);
+    }
+
+    public DecisionTree(Map<String, Object> decisionTreeData) {
+
+        if (decisionTreeData.get("modelName").toString() == null || decisionTreeData.get("modelName").toString()  == "") {
+            this.modelName = "_newModel";
+        } else {
+            this.modelName = decisionTreeData.get("modelName").toString() ;
+        }
+
+        System.out.println(decisionTreeData.get("featureExtraction"));
+        LinkedHashMap<String, Object> sourceData = (LinkedHashMap) decisionTreeData.get("featureExtraction");
+        this.setFeatureExtraction(new FeatureExtractionDto(sourceData));
+        this.setTrainModel(new DTTrainModelDto((LinkedHashMap) decisionTreeData.get("trainModel")));
+        this.setSaveModel(new SaveModelDto((LinkedHashMap<String, String>) decisionTreeData.get("saveModel")));
     }
 
 

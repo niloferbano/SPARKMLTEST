@@ -3,7 +3,7 @@ package de.tum.spark.ml.modules;
 import com.squareup.javapoet.*;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
-import de.tum.spark.ml.model.decisionTreeModel.KMeansTrainModelDto;
+import de.tum.spark.ml.model.KMeansTrainModelDto;
 
 import javax.lang.model.element.Modifier;
 import java.util.LinkedHashMap;

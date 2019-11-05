@@ -52,6 +52,7 @@ public class JavaCodeGenerator {
         }
 
         this.generatedClassName.addMethod(this.getMainMethod().build());
+        
 
 
         JavaFile javaFile = JavaFile.builder(this.getPackageName(), this.getGeneratedClassName().build())

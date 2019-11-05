@@ -1,6 +1,6 @@
 package de.tum.spark.ml.repository;
 
-import de.tum.spark.ml.model.decisionTreeModel.KMeansClustering;
+import de.tum.spark.ml.model.KMeansClustering;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface KMeansRepository  extends MongoRepository<KMeansClustering, String> {

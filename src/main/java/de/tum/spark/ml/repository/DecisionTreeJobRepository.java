@@ -1,6 +1,6 @@
 package de.tum.spark.ml.repository;
 
-import de.tum.spark.ml.model.decisionTreeModel.DecisionTree;
+import de.tum.spark.ml.model.DecisionTree;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 
