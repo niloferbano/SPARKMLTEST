@@ -1,15 +1,17 @@
 package de.tum.spark.ml.modules;
 
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
 import de.tum.spark.ml.model.CollaborativeFilteringTrainModelDto;
-import org.apache.spark.ml.recommendation.ALSModel;
 
-import java.util.*;
-
-import static java.util.Map.Entry.comparingByValue;
-import static java.util.stream.Collectors.toMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class CFTrainModel {
 
@@ -109,103 +111,143 @@ public class CFTrainModel {
         codeVariables.put("rank", "rank");
 
         //Integer[] testArr = new Integer[] collaborativeFiltering.getRanks();
+
+
+
+
+
+        codeVariables.put("alphas", JavaCodeGenerator.newVariableName());
+        codeVariables.put("regParams", JavaCodeGenerator.newVariableName());
+        codeVariables.put("ranks", JavaCodeGenerator.newVariableName());
+        //code.addStatement("$T $L = 0", codeVariables.get("integer"), codeVariables.get("rank"));
+        //code.addStatement("$T $L = 0.0", codeVariables.get("double"), codeVariables.get("reg"));
+        //code.addStatement("$T $L = 0.0", codeVariables.get("double"), codeVariables.get("alpha"));
+        code.addStatement("$T $L = $L", codeVariables.get("integer"), codeVariables.get("numOfBlocksParam"), collaborativeFiltering.getNumOfBlocks());
+        codeVariables.put("implicitPref", collaborativeFiltering.getImplicitPref());
+        codeVariables.put("implicitPrefParam", "implicitPref");
+        //code.addStatement("$T $L = $L", Boolean.class,  codeVariables.get("implicitPrefParam"), codeVariables.get("implicitPref"));
+        ParameterizedTypeName arrayOfInteger = ParameterizedTypeName.get(ClassName.get(ArrayList.class), integerType);
+        codeVariables.put("arrayOfInteger", arrayOfInteger);
+        code.addNamed("$arrayOfInteger:T $ranks:L = new $arrayOfInteger:T();\n", codeVariables);
+
         ArrayList<Integer> ranks = new ArrayList<>();
-        ranks = (ArrayList)collaborativeFiltering.getRanks();
+        ranks = (ArrayList<Integer>)collaborativeFiltering.getRanks();
+        for(Integer rank: ranks) {
+            codeVariables.put("rank", rank);
+            code.addNamed("$ranks:L.add($rank:L);\n", codeVariables);
+        }
+
+        ParameterizedTypeName arrayOfDouble = ParameterizedTypeName.get(ClassName.get(ArrayList.class), doubleType);
+        codeVariables.put("arrayOfDouble", arrayOfDouble);
+
+        code.addNamed("$arrayOfDouble:T $alphas:L = new $arrayOfDouble:T();\n", codeVariables);
+
         ArrayList<Double> alphas = new ArrayList<>();
-        alphas = (ArrayList)collaborativeFiltering.getAlphas();
+        alphas = (ArrayList<Double>)collaborativeFiltering.getAlphas();
+        for(Double alpha: alphas) {
+            codeVariables.put("alpha", alpha);
+            code.addNamed("$alphas:L.add($alpha:L);\n", codeVariables);
+        }
+
         ArrayList<Double> regParamas = new ArrayList<>();
-        regParamas = (ArrayList)collaborativeFiltering.getRegParams();
+        regParamas = (ArrayList<Double>)collaborativeFiltering.getRegParams();
+        code.addNamed("$arrayOfDouble:T $regParams:L = new $arrayOfDouble:T();\n", codeVariables);
+        for(Double regParam: regParamas) {
+            codeVariables.put("regParam", regParam);
+            code.addNamed("$regParams:L.add($regParam:L);\n", codeVariables);
+        }
 
         codeVariables.put("alpha", "alpha");
         codeVariables.put("reg", "regParam");
         codeVariables.put("rank", "rank");
-        code.addStatement("$T $L = 0", codeVariables.get("integer"), codeVariables.get("rank"));
-        code.addStatement("$T $L = 0.0", codeVariables.get("double"), codeVariables.get("reg"));
-        code.addStatement("$T $L = 0.0", codeVariables.get("double"), codeVariables.get("alpha"));
-        code.addStatement("$T $L = $L", codeVariables.get("integer"), codeVariables.get("numOfBlocksParam"), collaborativeFiltering.getNumOfBlocks());
-        codeVariables.put("implicitPref", collaborativeFiltering.getImplicitPref());
-        codeVariables.put("implicitPrefParam", "implicitPref");
-        code.addStatement("$T $L = $L", Boolean.class,  codeVariables.get("implicitPrefParam"), codeVariables.get("implicitPref"));
 
-//        code.beginControlFlow("for($T $L: $L)",
-//                codeVariables.get("integer"), codeVariables.get("rank"),codeVariables.get("rank"));
-//        code.beginControlFlow("for($T regParam: $L)",
-//                codeVariables.get("double"),codeVariables.get("reg"));
-//        code.beginControlFlow("for($T alpha: $L)",
-//                codeVariables.get("double"),codeVariables.get("alphas"));
+
+//        code.addNamed("$als:T $alsVariable:L = new ALS();\n", codeVariables);
+//        code.addNamed("$linkedListString:T $hyperparamList:L = new $linkedListString:T();\n", codeVariables);
+//        code.addNamed("$alsModel:T $alsModelVariable:L;\n", codeVariables);
+//        code.addNamed("$regressionEvaluator:T $regressionEvaluatorVariable:L = new RegressionEvaluator()\n" +
+//                "   .setMetricName($evaluationMetric:S)\n" +
+//                "   .setLabelCol($ratingCol:S)\n" +
+//                "   .setPredictionCol(\"prediction\");\n", codeVariables);
+//        code.addNamed("$double:T rmse;\n", codeVariables);
+//        code.addNamed("$datasetRow:T $predictions:L;\n", codeVariables);
+//        Integer loop = 0;
+//        for(Integer rank: ranks){
+//            for(Double alpha: alphas) {
+//                for(Double regParam: regParamas){
+//                    code.addStatement("$L = $L", codeVariables.get("rank"), rank);
+//                    code.addStatement("$L = $L", codeVariables.get("reg"), regParam);
+//                    code.addStatement("$L = $L", codeVariables.get("alpha"), alpha);
+//                    code.addStatement("$L = $L", "loop", loop);
+//                    code.addNamed("$hyperparamList:L.push(\"Rank: \" + $rank:L);\n", codeVariables);
+//                    code.addNamed("$hyperparamList:L.push(\"RegParams: \" + regParam);\n", codeVariables);
+//                    code.addNamed("$hyperparamList:L.push(\"Alpha: \" + alpha);\n", codeVariables);
+//                    code.addNamed(
+//                            "   $alsVariable:L.setMaxIter($maxIter:L)\n" +
+//                            "   .setSeed(new $random:T().nextLong())\n" +
+//                            "   .setAlpha($alpha:L)\n" +
+//                            "   .setRank($rank:L)\n" +
+//                            "   .setRegParam($reg:L)\n" +
+//                            "   .setImplicitPrefs($implicitPrefParam:L)\n" +
+//                            "   .setNumBlocks($numOfBlocksParam:L)\n" +
+//                            "   .setUserCol($userIdCol:S)\n" +
+//                            "   .setItemCol($itemIdCol:S)\n" +
+//                            "   .setRatingCol($ratingCol:S);\n", codeVariables);
+//                    code.addNamed("$alsModelVariable:L = $alsVariable:L.fit($trainingData:L);\n", codeVariables);
+//                    code.addNamed("$alsModelVariable:L.setColdStartStrategy(\"drop\");\n", codeVariables);
+//                    code.addNamed("$predictions:L = $alsModelVariable:L.transform($testData:L);\n", codeVariables);
+//                    code.addNamed("rmse = $regressionEvaluatorVariable:L.evaluate($predictions:L);\n", codeVariables);
+//                    code.addNamed("$errorArray:L.put(loop, rmse);\n", codeVariables);
+//                    code.addNamed("$modelArray:L.put(loop, $alsModelVariable:L);\n", codeVariables);
+//                    code.addNamed("$hyperparamMap:L.put(loop, new $linkedListString:T($hyperparamList:L));\n", codeVariables);
+//                    code.addNamed("$hyperparamList:L.clear();\n",codeVariables);
+//                    loop++;
+//
+//                }
+//            }
+//         }
         code.addNamed("$als:T $alsVariable:L = new ALS();\n", codeVariables);
+        if( collaborativeFiltering.getImplicitPref()) {
+            code.addNamed("$alsVariable:L.setImplicitPrefs($implicitPref:L);\n", codeVariables);
+        }
+        if( collaborativeFiltering.getNumOfBlocks() != null) {
+            code.addNamed("$alsVariable:L.setNumBlocks($numOfBlocks:L);\n", codeVariables);
+        }
+        if(collaborativeFiltering.getMaxIter() != null) {
+            code.addNamed("$alsVariable:L.setMaxIter($maxIter:L);\n", codeVariables);
+        }
+        code.addNamed("$alsVariable:L.setUserCol($userIdCol:S);\n", codeVariables);
+        code.addNamed("$alsVariable:L.setItemCol($itemIdCol:S);\n", codeVariables);
+        code.addNamed("$alsVariable:L.setRatingCol($ratingCol:S);\n", codeVariables);
+        code.beginControlFlow("for($T rank: $L)",
+                codeVariables.get("integer"), codeVariables.get("ranks"));
+        code.beginControlFlow("for($T regParam: $L)",
+                codeVariables.get("double"), codeVariables.get("regParams"));
+        code.beginControlFlow("for($T alpha: $L)",
+                codeVariables.get("double"), codeVariables.get("alphas"));
         code.addNamed("$linkedListString:T $hyperparamList:L = new $linkedListString:T();\n", codeVariables);
-        code.addNamed("$alsModel:T $alsModelVariable:L;\n", codeVariables);
+        code.addNamed("$hyperparamList:L.push(\"Rank: \" + rank);\n", codeVariables);
+        code.addNamed("$hyperparamList:L.push(\"RegParams: \" + regParam);\n", codeVariables);
+        code.addNamed("$hyperparamList:L.push(\"Alpha: \" + alpha);\n", codeVariables);
+        code.addNamed("$alsVariable:L.setAlpha(alpha)\n" +
+                "   .setRank(rank)\n" +
+                "   .setRegParam(regParam);\n", codeVariables);
+        code.addNamed("$alsModel:T $alsModelVariable:L = $alsVariable:L.fit($trainingData:L);\n", codeVariables);
+        code.addNamed("$alsModelVariable:L.setColdStartStrategy(\"drop\");\n", codeVariables);
+        code.addNamed("$datasetRow:T $predictions:L = $alsModelVariable:L.transform($testData:L);\n", codeVariables);
         code.addNamed("$regressionEvaluator:T $regressionEvaluatorVariable:L = new RegressionEvaluator()\n" +
                 "   .setMetricName($evaluationMetric:S)\n" +
                 "   .setLabelCol($ratingCol:S)\n" +
                 "   .setPredictionCol(\"prediction\");\n", codeVariables);
-        code.addNamed("$double:T rmse;\n", codeVariables);
-        code.addNamed("$datasetRow:T $predictions:L;\n", codeVariables);
-        Integer loop = 0;
-        for(Integer rank: ranks){
-            for(Double alpha: alphas) {
-                for(Double regParam: regParamas){
-                    code.addStatement("$L = $L", codeVariables.get("rank"), rank);
-                    code.addStatement("$L = $L", codeVariables.get("reg"), regParam);
-                    code.addStatement("$L = $L", codeVariables.get("alpha"), alpha);
-                    code.addStatement("$L = $L", "loop", loop);
-                    code.addNamed("$hyperparamList:L.push(\"Rank: \" + $rank:L);\n", codeVariables);
-                    code.addNamed("$hyperparamList:L.push(\"RegParams: \" + regParam);\n", codeVariables);
-                    code.addNamed("$hyperparamList:L.push(\"Alpha: \" + alpha);\n", codeVariables);
-                    code.addNamed(
-                            "   $alsVariable:L.setMaxIter($maxIter:L)\n" +
-                            "   .setAlpha($alpha:L)\n" +
-                            "   .setRank($rank:L)\n" +
-                            "   .setRegParam($reg:L)\n" +
-                            "   .setImplicitPrefs($implicitPrefParam:L)\n" +
-                            "   .setNumBlocks($numOfBlocksParam:L)\n" +
-                            "   .setUserCol($userIdCol:S)\n" +
-                            "   .setItemCol($itemIdCol:S)\n" +
-                            "   .setRatingCol($ratingCol:S);\n", codeVariables);
-                    code.addNamed("$alsModelVariable:L = $alsVariable:L.fit($trainingData:L);\n", codeVariables);
-                    code.addNamed("$alsModelVariable:L.setColdStartStrategy(\"drop\");\n", codeVariables);
-                    code.addNamed("$predictions:L = $alsModelVariable:L.transform($testData:L);\n", codeVariables);
-                    code.addNamed("rmse = $regressionEvaluatorVariable:L.evaluate($predictions:L);\n", codeVariables);
-                    code.addNamed("$errorArray:L.put(loop, rmse);\n", codeVariables);
-                    code.addNamed("$modelArray:L.put(loop, $alsModelVariable:L);\n", codeVariables);
-                    code.addNamed("$hyperparamMap:L.put(loop, new $linkedListString:T($hyperparamList:L));\n", codeVariables);
-                    code.addNamed("$hyperparamList:L.clear();\n",codeVariables);
-                    loop++;
-
-                }
-            }
-         }
-//        code.addNamed("$linkedListString:T $hyperparamList:L = new $linkedListString:T();\n", codeVariables);
-//        code.addNamed("$hyperparamList:L.push(\"Rank: \" + $rank:L);\n", codeVariables);
-//        code.addNamed("$hyperparamList:L.push(\"RegParams: \" + regParam);\n", codeVariables);
-//        code.addNamed("$hyperparamList:L.push(\"Alpha: \" + alpha);\n", codeVariables);
-//        code.addNamed("$als:T als = new ALS()\n" +
-//                "   .setMaxIter($maxIterParam:L)\n" +
-//                "   .setAlpha(alpha)\n" +
-//                "   .setRank($rank:L)\n" +
-//                "   .setRegParam(regParam)\n" +
-//                "   .setImplicitPrefs($implicitPrefParam:L)\n" +
-//                "   .setNumBlocks($numOfBlocksParam:L)\n" +
-//                "   .setUserCol($userIdCol:L)\n" +
-//                "   .setItemCol($itemIdCol:L)\n" +
-//                "   .setRatingCol($ratingCol:L);\n", codeVariables);
-//        code.addNamed("$alsModel:T $alsModelVariable:L = $alsVariable:L.fit($trainingData:L);\n", codeVariables);
-//        code.addNamed("$alsModelVariable:L.setColdStartStrategy(\"drop\");\n", codeVariables);
-//        code.addNamed("$datasetRow:T $predictions:L = $alsModelVariable:L.transform($testData:L);\n", codeVariables);
-//        code.addNamed("$regressionEvaluator:T $regressionEvaluatorVariable:L = new RegressionEvaluator()\n" +
-//                "   .setMetricName($evaluationMetric:L)\n" +
-//                "   .setLabelCol($ratingCol:L)\n" +
-//                "   .setPredictionCol(\"prediction\");\n", codeVariables);
-//        code.addNamed("$double:T rmse = $regressionEvaluatorVariable:L.evaluate($predictions:L);\n", codeVariables);
-//        code.addNamed("$errorArray:L.put(loop, rmse);\n", codeVariables);
-//        code.addNamed("$modelArray:L.put(loop, $alsModelVariable:L);\n", codeVariables);
-//        code.addNamed("$hyperparamMap:L.put(loop, $hyperparamList:L);\n", codeVariables);
-//        code.addNamed("$hyperparamList:L.clear();\n",codeVariables);
-//        code.addStatement("loop++");
-//        code.endControlFlow();
-//        code.endControlFlow();
-//        code.endControlFlow();
+        code.addNamed("$double:T rmse = $regressionEvaluatorVariable:L.evaluate($predictions:L);\n", codeVariables);
+        code.addNamed("$errorArray:L.put(loop, rmse);\n", codeVariables);
+        code.addNamed("$modelArray:L.put(loop, $alsModelVariable:L);\n", codeVariables);
+        code.addNamed("$hyperparamMap:L.put(loop, $hyperparamList:L);\n", codeVariables);
+        //code.addNamed("$hyperparamList:L.clear();\n",codeVariables);
+        code.addStatement("loop++");
+        code.endControlFlow();
+        code.endControlFlow();
+        code.endControlFlow();
 
         codeVariables.put("sortedArray", JavaCodeGenerator.newVariableName());
 
@@ -214,14 +256,18 @@ public class CFTrainModel {
                 ".sorted(comparingByValue())\n" +
                 ".collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));\n", codeVariables);
         code.addNamed("$integer:T leastError = $sortedArray:L.entrySet().stream().findFirst().get().getKey();\n", codeVariables);
-        code.addNamed("$alsModelVariable:L = $modelArray:L.get(leastError);\n", codeVariables);
+        code.addNamed("$alsModel:T $alsModelVariable:L = $modelArray:L.get(leastError);\n", codeVariables);
         codeVariables.put("system", System.class);
-        code.addNamed("$system:T.out.println(\"Least Error= \" + $errorArray:L.get(leastError) + \"HyperParameters=\" + $hyperparamMap:L.get(leastError));\n"
+        code.addNamed("$system:T.out.println(\"**********Least Error= \" + $errorArray:L.get(leastError) +\n" +
+                        " \"********HyperParameters=\" + $hyperparamMap:L.get(leastError));\n"
                 , codeVariables);
 
+        code.beginControlFlow("for($T key: $L.keySet() )", codeVariables.get("integer"), codeVariables.get("sortedArray"));
+        code.addNamed("$system:T.out.println(\"HyperParameters: \" + $hyperparamMap:L.get(key));\n", codeVariables);
+        code.addNamed("$system:T.out.println(\"Error: \" + $sortedArray:L.get(key));\n", codeVariables);
+        code.endControlFlow();
+
         javaCodeGenerator.getMainMethod().addCode(code.build());
-
-
 
         InputOutputMapper returnVal = new InputOutputMapper(alsModel, codeVariables.get("alsModelVariable").toString());
 

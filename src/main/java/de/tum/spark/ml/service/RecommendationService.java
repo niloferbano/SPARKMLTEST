@@ -15,6 +15,7 @@ import de.tum.spark.ml.modules.SetUpSparkSession;
 import de.tum.spark.ml.repository.CollaborativeFilteringRepository;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.spark.sql.types.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class RecommendationService {
         JavaCodeGenerator javaCodeGenerator = new JavaCodeGenerator(codePath, APP_NAME, PACKAGE_NAME);
         InputOutputMapper inputOutputMapper = SetUpSparkSession.getSparkSession("Recommendation", sparkConfig, javaCodeGenerator);
         codeVariables.put("sessionName", inputOutputMapper.getVariableName());
+        javaCodeGenerator.getMainMethod().addNamedCode("$sessionName:L.sparkContext().setLogLevel(\"ERROR\");\n", codeVariables);
         TypeName integerType = ClassName.get(Integer.class);
         ParameterizedTypeName mapOfIntInt = ParameterizedTypeName.get(ClassName.get(Map.class), integerType, integerType);
 
@@ -96,13 +98,13 @@ public class RecommendationService {
         String methodName = SaveModel.getJavaCode(collaborativeFiltering.getSaveModel(), javaCodeGenerator, inputOutputMapper);
 
 
-        codeVariables.put("methodName", methodName);
+        //codeVariables.put("methodName", methodName);
         codeVariables.put("locationToSave", collaborativeFiltering.getSaveModel().getFilePath());
-        codeVariables.put("modelName", collaborativeFiltering.getSaveModel().getModelName());
-        codeVariables.put("finalModel", inputOutputMapper.getVariableName());
+        //codeVariables.put("modelName", collaborativeFiltering.getSaveModel().getModelName());
+        //codeVariables.put("finalModel", inputOutputMapper.getVariableName());
         codeVariables.put("integer", integerType);
 
-        javaCodeGenerator.getMainMethod().addNamedCode("$methodName:L($modelName:S, $locationToSave:S, $finalModel:L);\n", codeVariables);
+        //javaCodeGenerator.getMainMethod().addNamedCode("$methodName:L($modelName:S, $locationToSave:S, $finalModel:L);\n", codeVariables);
 
         javaCodeGenerator.getMainMethod()
                 .addNamedCode("$sessionName:L.stop();\n", codeVariables);
@@ -118,14 +120,14 @@ public class RecommendationService {
     }
 
 
-    public CollaborativeFiltering save(CollaborativeFiltering decisionTree) {
-        String modelName = decisionTree.getModelName();
+    public CollaborativeFiltering save(CollaborativeFiltering collaborativeFiltering) {
+        String modelName = collaborativeFiltering.getModelName();
         CollaborativeFiltering exist = collaborativeFilteringRepository.findByModelName(modelName);
 
         if (exist != null) {
-            return decisionTree;
+            return collaborativeFiltering;
         } else {
-            return collaborativeFilteringRepository.save(decisionTree);
+            return collaborativeFilteringRepository.save(collaborativeFiltering);
         }
 
     }
@@ -141,7 +143,7 @@ public class RecommendationService {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addSuperinterface(Serializable.class);
 
-
+        codeVariables.put("className", "Rating");
         LinkedList<FieldSpec> fieldSpecs = new LinkedList<>();
         MethodSpec.Builder constructor = MethodSpec.constructorBuilder();
         MethodSpec.Builder parseRating = MethodSpec.methodBuilder("parseRating")
@@ -157,6 +159,9 @@ public class RecommendationService {
 
         Integer loop = 0;
         codeVariables.put("loop", loop);
+
+
+        List<Map<String, String>> parameterOrder = new LinkedList<>();
 
         for (String str : inputs) {
             if (types.get(str) == null || types.get(str).equals("int")) {
@@ -177,32 +182,47 @@ public class RecommendationService {
                 parseRating.addStatement("Float " + str + " = Float.parseFloat(fields[$L])", loop);
             }
             loop++;
-
         }
 
         for (FieldSpec fieldSpec : fieldSpecs) {
             className.addField(fieldSpec);
         }
+
+
         constructor.addModifiers(Modifier.PUBLIC);
         className.addMethod(constructor.build());
         codeVariables.put("integer", ClassName.get(Integer.class));
         codeVariables.put("finalArtistData", "finalArtistData");
+        codeVariables.put("productId", "finalArtistData");
+
         parseRating.addStatement("$T $L = $L.artistAliasMap.getOrDefault($L, $L)",
                 codeVariables.get("integer"), codeVariables.get("finalArtistData"), codeVariables.get("classname"),
                 sourceDetail.get("itemColName"),
                 sourceDetail.get("itemColName"));
+        CodeBlock.Builder constructorCall = CodeBlock.builder();
+        constructorCall.addNamed("return new $className:L(", codeVariables);
 
-        if (inputs.length == 3) {
-            parseRating.addStatement("return new Rating(" + inputs[0] + ",$L," + inputs[2] + ")", codeVariables.get("finalArtistData"));
+//        if (inputs.length == 3) {
+//            parseRating.addStatement("return new Rating(" + "$L" + ",$L," + "$L" + ")", codeVariables.get("finalArtistData"));
+//        }
+
+        Integer count = 0;
+        for( String str: inputs) {
+            if( str != sourceDetail.get("itemColName")) {
+                codeVariables.put(count.toString(), str);
+            }
+            else {
+                codeVariables.put(count.toString(), "finalArtistData");
+            }
+            count++;
         }
-
+        parseRating.addStatement("return new Rating(" + "$L" + ",$L," + "$L" + ")",
+                codeVariables.get("0"), codeVariables.get("1"),codeVariables.get("2"));
 
         AnnotationSpec getter = AnnotationSpec.builder(Getter.class).build();
         AnnotationSpec setter = AnnotationSpec.builder(Setter.class).build();
         className.addAnnotation(getter);
         className.addAnnotation(setter);
-
-
         className.addMethod(parseRating.build());
 
         return className;
@@ -216,14 +236,15 @@ public class RecommendationService {
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");
+        CollaborativeFiltering collaborativeFiltering = null;
         if (orderOfSteps.equals(keySet)) {
-            CollaborativeFiltering collaborativeFiltering = new CollaborativeFiltering(request);
+            collaborativeFiltering = new CollaborativeFiltering(request);
             if (collaborativeFiltering.getFeatureExtraction() == null
                     || collaborativeFiltering.getTrainModel() == null || collaborativeFiltering.getSaveModel() == null) {
+                return null;
+            } else {
                 return collaborativeFiltering;
             }
-        } else {
-            return null;
         }
         return  null;
     }

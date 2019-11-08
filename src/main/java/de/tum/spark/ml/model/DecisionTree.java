@@ -26,7 +26,7 @@ public class DecisionTree {
     @Field("FeatureExtraction")
     private FeatureExtractionDto featureExtraction;
     @NotNull
-    @Field("TrainModelParameters")
+    @Field("TrainModel")
     private DTTrainModelDto trainModel;
 
 
@@ -35,21 +35,21 @@ public class DecisionTree {
     private SaveModelDto saveModel;
 
 
-    private DecisionTree() {
+    public DecisionTree() {
     }
 
-    public DecisionTree(String modelName, FeatureExtractionDto featureExtractionDto,
-                        DTTrainModelDto DTTrainModelDto,
-                        SaveModelDto saveModelDto) {
-        if (modelName == null || modelName == "") {
-            this.modelName = "_newModel";
-        } else {
-            this.modelName = modelName;
-        }
-        this.setFeatureExtraction(featureExtractionDto);
-        this.setTrainModel(DTTrainModelDto);
-        this.setSaveModel(saveModelDto);
-    }
+//    public DecisionTree(String modelName, FeatureExtractionDto featureExtractionDto,
+//                        DTTrainModelDto DTTrainModelDto,
+//                        SaveModelDto saveModelDto) {
+//        if (modelName == null || modelName == "") {
+//            this.modelName = "_newModel";
+//        } else {
+//            this.modelName = modelName;
+//        }
+//        this.setFeatureExtraction(featureExtractionDto);
+//        this.setTrainModel(DTTrainModelDto);
+//        this.setSaveModel(saveModelDto);
+//    }
 
     public DecisionTree(Map<String, Object> decisionTreeData) {
 
@@ -63,7 +63,9 @@ public class DecisionTree {
         LinkedHashMap<String, Object> sourceData = (LinkedHashMap) decisionTreeData.get("featureExtraction");
         this.setFeatureExtraction(new FeatureExtractionDto(sourceData));
         this.setTrainModel(new DTTrainModelDto((LinkedHashMap) decisionTreeData.get("trainModel")));
-        this.setSaveModel(new SaveModelDto((LinkedHashMap<String, String>) decisionTreeData.get("saveModel")));
+        LinkedHashMap<String, String> saveDetail = (LinkedHashMap<String, String>) decisionTreeData.get("saveModel");
+        this.setSaveModel(new SaveModelDto(saveDetail.get("filePath"), saveDetail.get("modelName")));
+        //this.setSaveModel(new SaveModelDto((LinkedHashMap<String, String>) decisionTreeData.get("saveModel")));
     }
 
 

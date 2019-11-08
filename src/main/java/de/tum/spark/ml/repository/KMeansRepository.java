@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface KMeansRepository  extends MongoRepository<KMeansClustering, String> {
 
-    public KMeansClustering findByModelName(String name);
+    KMeansClustering findByModelName(String name);
 }

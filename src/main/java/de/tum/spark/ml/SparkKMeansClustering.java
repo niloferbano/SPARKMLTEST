@@ -13,6 +13,7 @@ import org.apache.spark.storage.StorageLevel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SparkKMeansClustering {
 
@@ -92,7 +93,8 @@ public class SparkKMeansClustering {
             KMeans kMeans = new KMeans().setFeaturesCol("scaledFeatures")
                     .setK(iter)
                     .setMaxIter(10)
-                    .setInitMode("random");
+                    .setInitMode("random")
+                    .setSeed(new Random().nextLong());
             KMeansModel model = kMeans.fit(finalClusterData);
             double WSSSE = model.computeCost(finalClusterData);
             System.out.print("With k{" + iter + "}");

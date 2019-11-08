@@ -4,6 +4,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
+import de.tum.spark.ml.codegenerator.MavenBuild;
 import de.tum.spark.ml.model.CollaborativeFiltering;
 import de.tum.spark.ml.model.KMeansClustering;
 import de.tum.spark.ml.modules.FeatureExtraction;
@@ -51,7 +52,7 @@ public class KMeansService {
                 projectPath, "src", "main", "java");
         JavaCodeGenerator javaCodeGenerator = new JavaCodeGenerator(codePath, APP_NAME, "de.tum.in.sparkml");
         InputOutputMapper inputOutputMapper = SetUpSparkSession.getSparkSession("KMeans", sparkConfig, javaCodeGenerator);
-        codeVariables.put("sessionName",inputOutputMapper.getVariableName());
+        codeVariables.put("sessionName", inputOutputMapper.getVariableName());
 
         inputOutputMapper = FeatureExtraction.getJavaCode(inputOutputMapper, kMeansClustering.getFeatureExtraction(), javaCodeGenerator);
 
@@ -77,37 +78,40 @@ public class KMeansService {
         if (kMeansClustering.getTrainModel().getScaleFeature()) {
             javaCodeGenerator.getMainMethod()
                     .addNamedCode("$standardScalar:T $standardScalarVariable:L = new $standardScalar:T()" +
-                                    ".setInputCol(\"featueres\")" +
+                                    ".setInputCol(\"features\")" +
                                     ".setOutputCol(\"scaledFeatures\")",
                             codeVariables);
             if (kMeansClustering.getTrainModel().getWithStd()) {
                 javaCodeGenerator.getMainMethod()
-                        .addStatement(".setWithStd(true)\n");
+                        .addStatement(".setWithStd(true)");
             } else {
                 javaCodeGenerator.getMainMethod()
-                        .addStatement(".setWithMean(true)\n");
+                        .addStatement(".setWithMean(true)");
             }
-
             javaCodeGenerator.getMainMethod()
                     .addNamedCode("$standardScalarModel:T $standardScalarModelVariable:L = $standardScalarVariable:L.fit($inputDataVariable:L);\n", codeVariables)
                     .addNamedCode("$datasetRow:T $finalClusteringData:L = " +
                             " $standardScalarModelVariable:L.transform($inputDataVariable:L).persist($storageLevel:T.MEMORY_ONLY());\n", codeVariables);
             inputOutputMapper.setVariableName(codeVariables.get("finalClusteringData").toString());
-
-            inputOutputMapper = KMeansTrainModel.getJaveCode(kMeansClustering.getTrainModel(), javaCodeGenerator, inputOutputMapper);
-
-            SaveModel.getJavaCode(kMeansClustering.getSaveModel(), javaCodeGenerator, inputOutputMapper);
-            javaCodeGenerator.getMainMethod()
-                    .addNamedCode("$sessionName:L.stop();\n", codeVariables);
-            System.out.println(System.getProperty("user.dir"));
-            FileUtils.copyFileToDirectory(new File(System.getProperty("user.dir") + "/src/main/resources/spark-sample-pom/pom.xml"), new File(projectPath));
-            javaCodeGenerator.generateJaveClassFile();
+        }
 
 
+        inputOutputMapper = KMeansTrainModel.getJaveCode(kMeansClustering.getTrainModel(), javaCodeGenerator, inputOutputMapper);
 
+        SaveModel.getJavaCode(kMeansClustering.getSaveModel(), javaCodeGenerator, inputOutputMapper);
+        javaCodeGenerator.getMainMethod()
+                .addNamedCode("$sessionName:L.stop();\n", codeVariables);
+        System.out.println(System.getProperty("user.dir"));
+        FileUtils.copyFileToDirectory(new File(System.getProperty("user.dir") + "/src/main/resources/spark-sample-pom/pom.xml"), new File(projectPath));
+        javaCodeGenerator.generateJaveClassFile();
+        try {
+            String result = MavenBuild.runMavenCommand("clean package", projectPath);
+        } catch (Exception e) {
+            System.out.println("An error occurred when building with Maven");
         }
 
     }
+
 
     public KMeansClustering save(KMeansClustering kMeansClustering) {
         String modelName = kMeansClustering.getModelName();
@@ -121,7 +125,7 @@ public class KMeansService {
 
     }
 
-    public KMeansClustering parseJsonData(Map<String, Object>  request) {
+    public KMeansClustering parseJsonData(Map<String, Object> request) {
         List<String> keySet = new LinkedList<>(request.keySet());
         List<String> orderOfSteps = new LinkedList<>();
 
@@ -129,16 +133,17 @@ public class KMeansService {
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");
+        KMeansClustering kMeansClustering = null;
         if (orderOfSteps.equals(keySet)) {
-            KMeansClustering kMeansClustering = new KMeansClustering(request);
+            kMeansClustering = new KMeansClustering(request);
             if (kMeansClustering.getFeatureExtraction() == null
                     || kMeansClustering.getTrainModel() == null || kMeansClustering.getSaveModel() == null) {
+                return null;
+            } else {
                 return kMeansClustering;
             }
-        } else {
-            return null;
         }
-        return  null;
+        return null;
     }
 
 }

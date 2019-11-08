@@ -1,9 +1,9 @@
 package de.tum.spark.ml.codegenerator;
 
+import org.apache.maven.shared.invoker.*;
+
 import java.io.File;
 import java.util.Collections;
-
-import org.apache.maven.shared.invoker.*;
 
 public class MavenBuild {
 
@@ -33,6 +33,7 @@ public class MavenBuild {
         if (invocationResult.getExitCode() != 0) {
             throw new IllegalStateException("Build failed.");
         }
+        System.out.println("Build successful");
         return mavenOutput.toString();
 
     }

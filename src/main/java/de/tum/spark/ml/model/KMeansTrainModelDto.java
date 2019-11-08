@@ -15,11 +15,11 @@ public class KMeansTrainModelDto {
     private Integer lowK;
     private Integer highK;
     private Integer maxIter;
-    private Double seed;
     private Integer steps;
     private String initMode;
     private Boolean scaleFeature;
     private Boolean withStd;
+    private Double distanceThreshold;
 
 
     public KMeansTrainModelDto(LinkedHashMap<String, Object> linkedHashMap) {
@@ -27,8 +27,8 @@ public class KMeansTrainModelDto {
         this.lowK =  (Integer) linkedHashMap.get("lowK");
         this.highK =  (Integer) linkedHashMap.get("highK");
         this.maxIter =  (Integer)linkedHashMap.get("maxIter");
-        this.seed =   (Double) linkedHashMap.get("seed");
         this.steps =  (Integer)linkedHashMap.get("steps");
+        this.distanceThreshold = (Double) linkedHashMap.get("distanceThreshold");
         this.initMode = linkedHashMap.get("initMode").toString();
         this.scaleFeature = (Boolean) linkedHashMap.get("scaleFeature");
         this.withStd = (Boolean) linkedHashMap.get("withStd");

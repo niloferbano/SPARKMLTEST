@@ -37,14 +37,14 @@ public class DecisionTreeTrainModel {
         codeVariables.put("impurityParam", "impurity");
         codeVariables.put("maxBinsParam", "maxBins");
 
-        code.add("$classifier:T $variabledtc:L = new $classifier:T()" +
+        code.addNamed("$classifier:T $variabledtc:L = new $classifier:T()" +
                 ".setLabelCol($constant:L)\n" +
                 ".setFeaturesCol(\"features\")\n" +
                 ".setMaxDepth($depthParam:L)\n" +
                 ".setImpurity($impurityParam:L)\n" +
                 ".setMaxBins($maxBinsParam:L);\n", codeVariables);
-        code.add("$classifierModel:T $variabledtcmodel:L = $variabledtc:L.fit($trainingData:L);\n", codeVariables);
-        code.add("return $variabledtcmodel:L;\n", codeVariables);
+        code.addNamed("$classifierModel:T $variabledtcmodel:L = $variabledtc:L.fit($trainingData:L);\n", codeVariables);
+        code.addNamed("return $variabledtcmodel:L;\n", codeVariables);
 
 
         MethodSpec decisionTreeModelMethod = MethodSpec.methodBuilder("decisionTree")
@@ -59,7 +59,7 @@ public class DecisionTreeTrainModel {
         javaCodeGenerator.addMethod(decisionTreeModelMethod);
         codeVariables.put("methodName", decisionTreeModelMethod.name);
         javaCodeGenerator.getMainMethod()
-                .addCode("$classifierModel:T $variabledtcmodel:L = $methodName:L($impurity:S, $depth:L, $maxBins:L,$trainingData:L);\n", codeVariables);
+                .addNamedCode("$classifierModel:T $variabledtcmodel:L = $methodName:L($impurity:S, $depth:L, $maxBins:L,$trainingData:L);\n", codeVariables);
 
         inputOutputMapper.setVariableTypeName(decisionTreeClassifierModel);
         inputOutputMapper.setVariableName(codeVariables.get("variabledtcmodel").toString());

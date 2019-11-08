@@ -64,15 +64,15 @@ public class JavaCodeGenerator_backup {
         codeVariables.put("variable", JavaCodeGenerator.newVariableName());
         codeVariables.put("constant", "\"labelCol\"");
         codeVariables.put("sparkSession", "sparkSession");
-        code.add("$sourceType:T $variable:L = $sparkSession:L.read()" +
+        code.addNamed("$sourceType:T $variable:L = $sparkSession:L.read()" +
                 ".option(\"header\", false)" +
                 ".option(\"inferSchema\", true).csv(filePath);\n", codeVariables);
         code.beginControlFlow("for(String c:  $L.columns())", codeVariables.get("variable"));
         code.addStatement("$L = $L.withColumn(c, $L.col(c).cast(\"double\"))", codeVariables.get("variable"), codeVariables.get("variable"), codeVariables.get("variable"));
         code.endControlFlow();
-        code.add("$variable:L = $variable:L.withColumnRenamed(labelColName, $constant:L);\n", codeVariables);
-        code.add("$variable:L = $variable:L.withColumn(\"labelCol\", $variable:L.col($constant:L).minus(1));\n", codeVariables);
-        code.add("return $variable:L;\n", codeVariables);
+        code.addNamed("$variable:L = $variable:L.withColumnRenamed(labelColName, $constant:L);\n", codeVariables);
+        code.addNamed("$variable:L = $variable:L.withColumn(\"labelCol\", $variable:L.col($constant:L).minus(1));\n", codeVariables);
+        code.addNamed("return $variable:L;\n", codeVariables);
 
         MethodSpec featureExtractionMethod = MethodSpec.methodBuilder("featureExtraction")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)

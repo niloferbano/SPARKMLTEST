@@ -4,24 +4,21 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.tum.spark.ml.model.CollaborativeFiltering;
 import de.tum.spark.ml.model.DecisionTree;
 import de.tum.spark.ml.model.KMeansClustering;
-import de.tum.spark.ml.model.KMeansClusteringData;
 //import de.tum.spark.ml.service.DecisionTreeService;
 import de.tum.spark.ml.service.DecisionTreeService;
 import de.tum.spark.ml.service.KMeansService;
 import de.tum.spark.ml.service.RecommendationService;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import scala.math.Ordering;
 
 import java.io.IOException;
 import java.util.*;
 
 @RestController
-public class DecisionTreeController {
+public class Controller {
 
 
     @Autowired
@@ -49,10 +46,10 @@ public class DecisionTreeController {
     public KMeansClustering createKMeansModel(@RequestBody Map<String, Object> request) throws IOException {
         KMeansClustering kMeansClusteringData = kMeansService.parseJsonData(request);
         if(kMeansClusteringData != null) {
-            KMeansClustering kMeansClustering = kMeansService.save(kMeansClusteringData);
-            kMeansService.generateCode(kMeansClustering);
+            KMeansClustering kMeansClustering1 = kMeansService.save(kMeansClusteringData);
+            kMeansService.generateCode(kMeansClustering1);
 
-            return kMeansClustering;
+            return kMeansClustering1;
         }
 
         return null;

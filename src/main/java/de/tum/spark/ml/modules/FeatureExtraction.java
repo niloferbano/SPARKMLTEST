@@ -59,8 +59,9 @@ public class FeatureExtraction {
 
         code.beginControlFlow("for(String c:  $L.columns())", codeVariables.get("variable"));
         if(javaCodeGenerator.getClassName().contains("KMeans")) {
-            code.addNamed("if(c.equals($labelColName:S))", codeVariables);
+            code.beginControlFlow("if(c.equals($S))", codeVariables.get("labelColName"));
             code.addStatement("continue");
+            code.endControlFlow();
         }
         code.addStatement("$L = $L.withColumn(c, $L.col(c).cast(\"double\"))", codeVariables.get("variable"), codeVariables.get("variable"), codeVariables.get("variable"));
         code.endControlFlow();
@@ -100,9 +101,13 @@ public class FeatureExtraction {
             javaCodeGenerator.addMethod(featureExtractionMethod);
 
             javaCodeGenerator.getMainMethod().addNamedCode("$arrayOfString:T $removeCol:L = new $arrayOfString:T();\n", codeVariables);
+            for( String col: featureExtractionDto.getColWithString()) {
+                codeVariables.put("col", col);
+                javaCodeGenerator.getMainMethod().addNamedCode("$removeCol:L.add($col:S);\n", codeVariables);
+            }
 
             javaCodeGenerator.getMainMethod()
-                    .addNamedCode("$sourceType:T $inputDataVariable:L = featureExtraction($sparkSession:L, $filePath:S, $labelColName:S, $columnsToRemove:L);\n", codeVariables);
+                    .addNamedCode("$sourceType:T $inputDataVariable:L = featureExtraction($sparkSession:L, $filePath:S, $labelColName:S, $removeCol:L);\n", codeVariables);
 
         } else {
             MethodSpec  featureExtractionMethod = MethodSpec.methodBuilder("featureExtraction")
@@ -115,7 +120,7 @@ public class FeatureExtraction {
                     .build();
             javaCodeGenerator.addMethod(featureExtractionMethod);
             javaCodeGenerator.getMainMethod()
-                    .addCode("$sourceType:T $inputDataVariable:L = featureExtraction($sparkSession:L, $filePath:S, $labelColName:S);\n", codeVariables);
+                    .addNamedCode("$sourceType:T $inputDataVariable:L = featureExtraction($sparkSession:L, $filePath:S, $labelColName:S);\n", codeVariables);
         }
 
 
