@@ -17,14 +17,14 @@ public class DTTrainModelDto {
     private Double training_size;
     private Double test_size;
 
-
-    public DTTrainModelDto(LinkedHashMap<String, Object> linkedHashMap) {
-
-        this.impurity =  linkedHashMap.get("impurity").toString();
-        this.depth =  (Integer) linkedHashMap.get("depth");
-        this.maxBins =  (Integer)linkedHashMap.get("maxBins");
-        this.training_size =   (Double) linkedHashMap.get("training_size");
-        this.test_size =  (Double) linkedHashMap.get("test_size");
-    }
+//
+//    public DTTrainModelDto(LinkedHashMap<String, Object> linkedHashMap) {
+//
+//        this.impurity =  linkedHashMap.get("impurity").toString();
+//        this.depth =  (Integer) linkedHashMap.get("depth");
+//        this.maxBins =  (Integer)linkedHashMap.get("maxBins");
+//        this.training_size =   (Double) linkedHashMap.get("training_size");
+//        this.test_size =  (Double) linkedHashMap.get("test_size");
+//    }
 
 }

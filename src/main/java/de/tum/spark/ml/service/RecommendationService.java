@@ -2,11 +2,11 @@ package de.tum.spark.ml.service;
 
 
 import com.squareup.javapoet.*;
-import de.tum.spark.ml.SparkCollaborativeFiltering;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
 import de.tum.spark.ml.codegenerator.MavenBuild;
 import de.tum.spark.ml.model.CollaborativeFiltering;
+import de.tum.spark.ml.model.CollaborativeFilteringMapper;
 import de.tum.spark.ml.model.FeatureExtractionFromTextFileDto;
 import de.tum.spark.ml.modules.CFTrainModel;
 import de.tum.spark.ml.modules.FeatureExtractionFromTextFile;
@@ -15,9 +15,7 @@ import de.tum.spark.ml.modules.SetUpSparkSession;
 import de.tum.spark.ml.repository.CollaborativeFilteringRepository;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FileUtils;
-import org.apache.spark.sql.types.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +23,10 @@ import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class RecommendationService {
@@ -236,9 +236,9 @@ public class RecommendationService {
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");
-        CollaborativeFiltering collaborativeFiltering = null;
+        CollaborativeFiltering collaborativeFiltering = new CollaborativeFiltering();
         if (orderOfSteps.equals(keySet)) {
-            collaborativeFiltering = new CollaborativeFiltering(request);
+            collaborativeFiltering = CollaborativeFilteringMapper.mapper(request);
             if (collaborativeFiltering.getFeatureExtraction() == null
                     || collaborativeFiltering.getTrainModel() == null || collaborativeFiltering.getSaveModel() == null) {
                 return null;

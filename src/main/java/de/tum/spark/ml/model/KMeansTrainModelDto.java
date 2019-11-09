@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 @Getter
@@ -22,15 +21,15 @@ public class KMeansTrainModelDto {
     private Double distanceThreshold;
 
 
-    public KMeansTrainModelDto(LinkedHashMap<String, Object> linkedHashMap) {
-
-        this.lowK =  (Integer) linkedHashMap.get("lowK");
-        this.highK =  (Integer) linkedHashMap.get("highK");
-        this.maxIter =  (Integer)linkedHashMap.get("maxIter");
-        this.steps =  (Integer)linkedHashMap.get("steps");
-        this.distanceThreshold = (Double) linkedHashMap.get("distanceThreshold");
-        this.initMode = linkedHashMap.get("initMode").toString();
-        this.scaleFeature = (Boolean) linkedHashMap.get("scaleFeature");
-        this.withStd = (Boolean) linkedHashMap.get("withStd");
-    }
+//    public KMeansTrainModelDto(LinkedHashMap<String, Object> linkedHashMap) {
+//
+//        this.lowK =  (Integer) linkedHashMap.get("lowK");
+//        this.highK =  (Integer) linkedHashMap.get("highK");
+//        this.maxIter =  (Integer)linkedHashMap.get("maxIter");
+//        this.steps =  (Integer)linkedHashMap.get("steps");
+//        this.distanceThreshold = (Double) linkedHashMap.get("distanceThreshold");
+//        this.initMode = linkedHashMap.get("initMode").toString();
+//        this.scaleFeature = (Boolean) linkedHashMap.get("scaleFeature");
+//        this.withStd = (Boolean) linkedHashMap.get("withStd");
+//    }
 }

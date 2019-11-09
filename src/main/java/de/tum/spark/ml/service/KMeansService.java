@@ -5,8 +5,8 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
 import de.tum.spark.ml.codegenerator.MavenBuild;
-import de.tum.spark.ml.model.CollaborativeFiltering;
 import de.tum.spark.ml.model.KMeansClustering;
+import de.tum.spark.ml.model.KMeansClusteringMapper;
 import de.tum.spark.ml.modules.FeatureExtraction;
 import de.tum.spark.ml.modules.KMeansTrainModel;
 import de.tum.spark.ml.modules.SaveModel;
@@ -118,7 +118,11 @@ public class KMeansService {
         KMeansClustering exist = kMeansRepository.findByModelName(modelName);
 
         if (exist != null) {
-            return kMeansClustering;
+            exist.setModelName(kMeansClustering.getModelName());
+            exist.setTrainModel(kMeansClustering.getTrainModel());
+            exist.setFeatureExtraction(kMeansClustering.getFeatureExtraction());
+            exist.setSaveModel(kMeansClustering.getSaveModel());
+            return kMeansRepository.save(kMeansClustering);
         } else {
             return kMeansRepository.save(kMeansClustering);
         }
@@ -133,9 +137,9 @@ public class KMeansService {
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");
-        KMeansClustering kMeansClustering = null;
+        KMeansClustering kMeansClustering = new KMeansClustering();
         if (orderOfSteps.equals(keySet)) {
-            kMeansClustering = new KMeansClustering(request);
+            kMeansClustering =  KMeansClusteringMapper.mapper(request);
             if (kMeansClustering.getFeatureExtraction() == null
                     || kMeansClustering.getTrainModel() == null || kMeansClustering.getSaveModel() == null) {
                 return null;

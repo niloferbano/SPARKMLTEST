@@ -36,8 +36,8 @@ public class KMeansClustering {
     private SaveModelDto saveModel;
 
 
-//    public KMeansClustering() {
-//    }
+    public KMeansClustering() {
+    }
 //
 //    public KMeansClustering(KMeansClusteringData kMeansClusteringData) {
 //        if (kMeansClusteringData.getModelName() == null || kMeansClusteringData.getModelName() == "") {
@@ -51,20 +51,20 @@ public class KMeansClustering {
 //        this.setTrainModel(kMeansClusteringData.getTrainModel());
 //    }
 
-    public KMeansClustering(Map<String, Object> kMeansClustering) {
-
-        if (kMeansClustering.get("modelName").toString() == null
-                || kMeansClustering.get("modelName").toString()  == "") {
-            this.modelName = "_newModel";
-        } else {
-            this.modelName = kMeansClustering.get("modelName").toString() ;
-        }
-
-        this.setFeatureExtraction(new FeatureExtractionDto((LinkedHashMap) kMeansClustering.get("featureExtraction")));
-        this.setTrainModel(new KMeansTrainModelDto((LinkedHashMap)kMeansClustering.get("trainModel")));
-        LinkedHashMap<String, String> saveDetail = (LinkedHashMap<String, String>) kMeansClustering.get("saveModel");
-        this.setSaveModel(new SaveModelDto(saveDetail.get("filePath"), saveDetail.get("modelName")));
-        //this.setSaveModel(new SaveModelDto((LinkedHashMap) mappedData.get("saveModel")));
-
-    }
+//    public KMeansClustering(Map<String, Object> kMeansClustering) {
+//
+//        if (kMeansClustering.get("modelName").toString() == null
+//                || kMeansClustering.get("modelName").toString()  == "") {
+//            this.modelName = "_newModel";
+//        } else {
+//            this.modelName = kMeansClustering.get("modelName").toString() ;
+//        }
+//
+//        this.setFeatureExtraction(new FeatureExtractionDto((LinkedHashMap) kMeansClustering.get("featureExtraction")));
+//        this.setTrainModel(new KMeansTrainModelDto((LinkedHashMap)kMeansClustering.get("trainModel")));
+//        LinkedHashMap<String, String> saveDetail = (LinkedHashMap<String, String>) kMeansClustering.get("saveModel");
+//        this.setSaveModel(new SaveModelDto(saveDetail.get("filePath"), saveDetail.get("modelName")));
+//        //this.setSaveModel(new SaveModelDto((LinkedHashMap) mappedData.get("saveModel")));
+//
+//    }
 }

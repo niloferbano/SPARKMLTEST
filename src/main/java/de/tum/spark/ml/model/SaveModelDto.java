@@ -1,10 +1,7 @@
 package de.tum.spark.ml.model;
 
-import de.tum.spark.ml.modules.SaveModel;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.LinkedHashMap;
 
 @Getter
 @Setter

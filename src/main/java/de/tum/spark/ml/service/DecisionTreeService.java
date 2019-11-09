@@ -5,6 +5,7 @@ import de.tum.spark.ml.codegenerator.InputOutputMapper;
 import de.tum.spark.ml.codegenerator.JavaCodeGenerator;
 import de.tum.spark.ml.codegenerator.MavenBuild;
 import de.tum.spark.ml.model.DecisionTree;
+import de.tum.spark.ml.model.DecisionTreeMapper;
 import de.tum.spark.ml.modules.DecisionTreeTrainModel;
 import de.tum.spark.ml.modules.FeatureExtraction;
 import de.tum.spark.ml.modules.SaveModel;
@@ -119,7 +120,12 @@ public class DecisionTreeService {
         DecisionTree exist = decisionTreeJobRepository.findByModelName(modelName);
 
         if (exist != null) {
-            return decisionTree;
+            exist.setModelName(decisionTree.getModelName());
+            exist.setFeatureExtraction(decisionTree.getFeatureExtraction());
+            exist.setTrainModel(decisionTree.getTrainModel());
+            exist.setSaveModel(decisionTree.getSaveModel());
+            decisionTreeJobRepository.save(exist);
+            return exist;
         } else {
             return decisionTreeJobRepository.save(decisionTree);
         }
@@ -134,9 +140,9 @@ public class DecisionTreeService {
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");
-        DecisionTree decisionTree = null;
+        DecisionTree decisionTree = new DecisionTree();
         if (orderOfSteps.equals(keySet)) {
-            decisionTree = new DecisionTree(request);
+            decisionTree = DecisionTreeMapper.mapper(request);
             if (decisionTree.getFeatureExtraction() == null
                     || decisionTree.getTrainModel() == null || decisionTree.getSaveModel() == null) {
                 return null;
