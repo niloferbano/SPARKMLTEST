@@ -1,0 +1,19 @@
+<div>
+  <mat-dialog-content>
+    <p>Saving Model</p>
+    <mat-divider></mat-divider>
+    <form [formGroup]="saveModelDetail">
+      <mat-form-field >
+        <input  matInput formControlName="filePath" placeholder="Directory to save">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="modelName" placeholder="machine learning model name">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="saveModelDetail" cdkFocusInitial>Save</button>
+  </mat-dialog-actions>
+</div>
+

@@ -1,0 +1,45 @@
+<!--<div>-->
+<!--  <h1>APACHE SPARK ML TOOL</h1>-->
+<!--  <div class="example-container">-->
+<!--    <h2>FUNCTIONS</h2>-->
+
+<!--    <div-->
+<!--      cdkDropList-->
+<!--      #todoList="cdkDropList"-->
+<!--      [cdkDropListData]="functions"-->
+<!--      [cdkDropListConnectedTo]="[doneList]"-->
+<!--      class="example-list"-->
+<!--      (cdkDropListDropped)="drop($event)">-->
+<!--      <div class="example-box" *ngFor="let item of functions" cdkDrag>{{item}}</div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="example-container">-->
+<!--    <h2>PIPELINE</h2>-->
+
+<!--    <div-->
+<!--      cdkDropList-->
+<!--      #doneList="cdkDropList"-->
+<!--      [cdkDropListData]="done"-->
+<!--      [cdkDropListConnectedTo]="[todoList]"-->
+<!--      class="example-list"-->
+<!--      (cdkDropListDropped)="drop($event)">-->
+<!--      <div class="example-box" *ngFor="let item of done" cdkDrag >-->
+<!--        {{item}}-->
+<!--        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'FeatureExtraction'">Details</button>-->
+<!--        <button mat-raised-button (click)="openFeatureExtractionText()" *ngIf="item === 'FeatureExtractionFromTextFile'">Details</button>-->
+<!--        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'Save Model'">Details</button>-->
+<!--        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'Decision Tree'">Details</button>-->
+<!--        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'Collaborative Filtering'">Details</button>-->
+<!--        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'KMEANS'">Details</button>-->
+
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <button mat-raised-button color="primary">Generate Jar</button>-->
+
+<!--</div>-->
+
+<app-home-page></app-home-page>
+<router-outlet></router-outlet>

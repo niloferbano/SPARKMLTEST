@@ -1,0 +1,24 @@
+<div>
+  <mat-dialog-content>
+    <p>Decision Tree Model parameter</p>
+    <form [formGroup]="decisionTreeParamForm">
+      <mat-form-field>
+        <input matInput type="text" formControlName="impurity" value="entropy" placeholder="impurity">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" formControlName="depth" placeholder="Depth">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="number" formControlName="maxBins" placeholder="max bins">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" formControlName="training_size" placeholder="training size" (change)="updatetest($event)">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="decisionTreeParamForm" cdkFocusInitial>Save</button>
+  </mat-dialog-actions>
+</div>

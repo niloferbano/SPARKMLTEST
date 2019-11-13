@@ -1,0 +1,52 @@
+<div>
+  <h1>APACHE SPARK ML TOOL</h1>
+  <div class="example-container">
+    <h2>FUNCTIONS</h2>
+
+    <div
+      cdkDropList
+      #todoList="cdkDropList"
+      [cdkDropListData]="functions"
+      [cdkDropListConnectedTo]="[doneList]"
+      class="example-list"
+      (cdkDropListDropped)="drop($event)">
+      <div class="example-box" *ngFor="let item of functions" cdkDrag>{{item}}</div>
+    </div>
+  </div>
+
+  <div class="example-container">
+    <h2>PIPELINE</h2>
+
+    <div
+      cdkDropList
+      #doneList="cdkDropList"
+      [cdkDropListData]="done"
+      [cdkDropListConnectedTo]="[todoList]"
+      class="example-list"
+      (cdkDropListDropped)="drop($event)">
+      <div class="example-box" *ngFor="let item of done" cdkDrag >
+        {{item}}
+        <div>
+        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'FeatureExtraction'">Details</button>
+        <button mat-raised-button (click)="openFeatureExtractionText()" *ngIf="item === 'FeatureExtractionFromTextFile'">Details</button>
+        <button mat-raised-button (click)="openSaveModel()" *ngIf="item === 'Save Model'">Details</button>
+        <button mat-raised-button (click)="openDecisionTree()" *ngIf="item === 'Decision Tree'">Details</button>
+        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'Collaborative Filtering'">Details</button>
+        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'KMEANS'">Details</button>
+        </div>
+        <div *ngIf="done[0] !== 'FeatureExtraction' && done[0] !== 'FeatureExtractionFromTextFile'">
+          <mat-error>The first component should be feature extraction</mat-error>
+        </div>
+        <div *ngIf="done.length === 2 && done[1] !== 'Decision Tree' && done[1] !== 'Collaborative Filtering' && done[1] !== 'KMEANS'">
+          <mat-error>The second component should be a machine learning function</mat-error>
+        </div>
+        <div *ngIf="done.length ===3 && done[2] !== 'Save Model' ">
+          <mat-error>The third component should be save model</mat-error>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button mat-raised-button color="primary" (click)="GenerateJarFile()">Generate Jar</button>
+
+</div>

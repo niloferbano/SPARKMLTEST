@@ -1,0 +1,58 @@
+<div>
+  <mat-dialog-content>
+    <p>Source file detail</p>
+    <mat-divider></mat-divider>
+<!--    <label>File Path</label>-->
+<!--    <input type="file" (change)="onFileSelected($event)">-->
+    <form [formGroup]="sourceFilDetail">
+      <mat-form-field>
+        <input matInput formControlName="filePath" placeholder="alias file path">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="text" formControlName="separator" placeholder="Separator">
+      </mat-form-field>
+      <p>Source Detail</p>
+      <div formGroupName="sourceDetail">
+        <mat-form-field>
+          <input matInput formControlName="orderOfSourceColumns" placeholder="order of source column"
+                 matTooltip="comma separated column names">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName="ratingColType" placeholder="rating column type"
+                 matTooltip="column type e.g. int/float etc">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName="itemColName" placeholder="Item column name">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName="ratingColName" placeholder="rating column name"
+                 matTooltip="rating/count column name">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName="userIdColName" placeholder="user column name"
+                 matTooltip="user/item column name">
+        </mat-form-field>
+
+      </div>
+    </form>
+    <p>Alias file detail</p>
+    <mat-divider></mat-divider>
+<!--    <label>File Path</label>-->
+<!--    <input type="file" (change)="onFileSelected($event)">-->
+    <form [formGroup]="aliasFileDetail">
+      <mat-form-field>
+        <input matInput formControlName="filePath" placeholder="alias file path">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="separator" placeholder="Separator">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="orderOfSourceColumns" placeholder="Order Of columns">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="sourceData" cdkFocusInitial>Save</button>
+  </mat-dialog-actions>
+</div>
