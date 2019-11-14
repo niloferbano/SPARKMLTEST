@@ -116,11 +116,11 @@ public class DecisionTreeService {
     }
 
     public DecisionTree save(DecisionTree decisionTree) {
-        String modelName = decisionTree.getModelName();
-        DecisionTree exist = decisionTreeJobRepository.findByModelName(modelName);
+        String modelName = decisionTree.getJobName();
+        DecisionTree exist = decisionTreeJobRepository.findByJobName(modelName);
 
         if (exist != null) {
-            exist.setModelName(decisionTree.getModelName());
+            exist.setJobName(decisionTree.getJobName());
             exist.setFeatureExtraction(decisionTree.getFeatureExtraction());
             exist.setTrainModel(decisionTree.getTrainModel());
             exist.setSaveModel(decisionTree.getSaveModel());
@@ -136,10 +136,11 @@ public class DecisionTreeService {
         List<String> keySet = new LinkedList<>(request.keySet());
         List<String> orderOfSteps = new LinkedList<>();
 
-        orderOfSteps.add("modelName");
+        orderOfSteps.add("jobName");
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");
+
         DecisionTree decisionTree = new DecisionTree();
         if (orderOfSteps.equals(keySet)) {
             decisionTree = DecisionTreeMapper.mapper(request);

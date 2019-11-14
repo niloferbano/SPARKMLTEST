@@ -24,25 +24,39 @@
       [cdkDropListConnectedTo]="[todoList]"
       class="example-list"
       (cdkDropListDropped)="drop($event)">
-      <div class="example-box" *ngFor="let item of done" cdkDrag >
+      <div class="example-box" *ngFor="let item of done" cdkDrag>
         {{item}}
         <div>
-        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'FeatureExtraction'">Details</button>
-        <button mat-raised-button (click)="openFeatureExtractionText()" *ngIf="item === 'FeatureExtractionFromTextFile'">Details</button>
-        <button mat-raised-button (click)="openSaveModel()" *ngIf="item === 'Save Model'">Details</button>
-        <button mat-raised-button (click)="openDecisionTree()" *ngIf="item === 'Decision Tree'">Details</button>
-        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'Collaborative Filtering'">Details</button>
-        <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'KMEANS'">Details</button>
+          <button mat-raised-button (click)="openStartJob()" *ngIf="item === 'Start'">Details
+          </button>
+          <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'FeatureExtraction'">Details
+          </button>
+          <button mat-raised-button (click)="openFeatureExtractionText()"
+                  *ngIf="item === 'FeatureExtractionFromTextFile'">Details
+          </button>
+          <button mat-raised-button (click)="openSaveModel()" *ngIf="item === 'Save Model'">Details</button>
+          <button mat-raised-button (click)="openDecisionTree()" *ngIf="item === 'Decision Tree'">Details</button>
+          <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'Collaborative Filtering'">
+            Details
+          </button>
+          <button mat-raised-button (click)="openKMeans()" *ngIf="item === 'KMEANS'">Details</button>
         </div>
-        <div *ngIf="done[0] !== 'FeatureExtraction' && done[0] !== 'FeatureExtractionFromTextFile'">
-          <mat-error>The first component should be feature extraction</mat-error>
+        <div *ngIf="done[0] !== 'Start' && done[0] !== 'Start'">
+          <mat-error>The first component should be start</mat-error>
         </div>
-        <div *ngIf="done.length === 2 && done[1] !== 'Decision Tree' && done[1] !== 'Collaborative Filtering' && done[1] !== 'KMEANS'">
-          <mat-error>The second component should be a machine learning function</mat-error>
+        <div *ngIf="done.length === 2 && done[1] !== 'FeatureExtraction' && done[1] !== 'FeatureExtractionFromTextFile'">
+          <mat-error>The second component should be feature extraction</mat-error>
         </div>
-        <div *ngIf="done.length ===3 && done[2] !== 'Save Model' ">
-          <mat-error>The third component should be save model</mat-error>
+        <div
+          *ngIf="done.length === 3 && done[2] !== 'Decision Tree' && done[2] !== 'Collaborative Filtering' && done[2] !== 'KMEANS'">
+          <mat-error>The third component should be a machine learning function</mat-error>
         </div>
+        <div *ngIf="done.length ===4 && done[3] !== 'Save Model' ">
+          <mat-error>The fourth component should be save model</mat-error>
+        </div>
+      </div>
+      <div *ngIf="isNotValid">
+        <mat-error>There is a mismatch of order of components provided for the pipeline</mat-error>
       </div>
     </div>
   </div>

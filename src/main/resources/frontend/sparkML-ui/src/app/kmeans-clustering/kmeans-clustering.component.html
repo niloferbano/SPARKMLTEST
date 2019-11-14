@@ -1,1 +1,40 @@
-<p>kmeans-clustering works!</p>
+<div>
+  <mat-dialog-content>
+    <p>KMeans Model parameter</p>
+    <mat-divider></mat-divider>
+    <form [formGroup]="kmeansFormGroup">
+      <mat-form-field>
+        <input matInput type="number" formControlName="lowK" placeholder="low K">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" formControlName="highK" placeholder="high K">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" formControlName="maxIter" placeholder="max iterations">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="text" formControlName="initMode" placeholder="init Mode eg. random">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" formControlName="distanceThreshold" placeholder="distance threshold to centroid">
+      </mat-form-field>
+      <mat-form-field *ngIf="kmeansFormGroup.get('highK').value">
+        <input matInput type="number" formControlName="steps" placeholder="steps to run the between K values">
+      </mat-form-field>
+      <br>
+      <mat-checkbox formControlName="scaleFeature">Scale Features</mat-checkbox>
+
+      <div *ngIf="kmeansFormGroup.get('scaleFeature').value">
+        <mat-slide-toggle formControlName="withStd" checked="withStd.value">
+          with standard deviation
+        </mat-slide-toggle>
+      </div>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="kmeansFormGroup" cdkFocusInitial>
+      Save</button>
+  </mat-dialog-actions>
+</div>
+

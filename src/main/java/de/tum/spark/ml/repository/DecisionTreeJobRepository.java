@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 
 public interface DecisionTreeJobRepository extends MongoRepository<DecisionTree, String> {
-     DecisionTree findByModelName(String name);
+     DecisionTree findByJobName(String name);
 }

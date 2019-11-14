@@ -19,6 +19,11 @@ import { CollaborativeFilteringComponent } from './collaborative-filtering/colla
 import { HomePageComponent } from './home-page/home-page.component';
 import { HttpClientModule} from "@angular/common/http";
 import {CodeGenerationService} from "./services/code-generation.service";
+import { StartJobComponent } from './start-job/start-job.component';
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MAT_RADIO_DEFAULT_OPTIONS, MatRadioModule} from "@angular/material/radio";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 
 @NgModule({
@@ -30,7 +35,8 @@ import {CodeGenerationService} from "./services/code-generation.service";
     KMeansClusteringComponent,
     DecisionTreeComponent,
     CollaborativeFilteringComponent,
-    HomePageComponent
+    HomePageComponent,
+    StartJobComponent
   ],
   imports: [
     BrowserModule,
@@ -45,11 +51,21 @@ import {CodeGenerationService} from "./services/code-generation.service";
     ReactiveFormsModule,
     MatDividerModule,
     MatTooltipModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatSlideToggleModule
   ],
-  providers: [CodeGenerationService],
+  providers: [CodeGenerationService,
+    {
+      provide: MAT_RADIO_DEFAULT_OPTIONS,
+      useValue: { color: 'accent' },
+    }],
   bootstrap: [AppComponent],
-  entryComponents: [FeatureDialogueComponent,
+  entryComponents: [
+    StartJobComponent,
+    FeatureDialogueComponent,
     FeatureTextDialogueComponent,
     SaveModelDialogueComponent,
     KMeansClusteringComponent,

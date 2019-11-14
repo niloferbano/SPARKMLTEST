@@ -8,7 +8,7 @@ public class DecisionTreeMapper {
     public static DecisionTree mapper(Map<String, Object> decisionTreeData) {
 
         DecisionTree decisionTree = new DecisionTree();
-        decisionTree.setModelName(decisionTreeData.get("modelName").toString());
+        decisionTree.setJobName(decisionTreeData.get("jobName").toString());
         LinkedHashMap<String, Object> sourceData = (LinkedHashMap) decisionTreeData.get("featureExtraction");
         decisionTree.setFeatureExtraction(new FeatureExtractionDto(sourceData));
         decisionTree.setTrainModel(DTTrainModelDtoMapper.mapper ((LinkedHashMap) decisionTreeData.get("trainModel")));

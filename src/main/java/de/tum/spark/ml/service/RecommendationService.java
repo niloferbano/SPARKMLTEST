@@ -121,11 +121,15 @@ public class RecommendationService {
 
 
     public CollaborativeFiltering save(CollaborativeFiltering collaborativeFiltering) {
-        String modelName = collaborativeFiltering.getModelName();
-        CollaborativeFiltering exist = collaborativeFilteringRepository.findByModelName(modelName);
-
+        String jobName = collaborativeFiltering.getJobName();
+        CollaborativeFiltering exist = collaborativeFilteringRepository.findByJobName(jobName);
         if (exist != null) {
-            return collaborativeFiltering;
+            exist.setJobName(collaborativeFiltering.getJobName());
+            exist.setFeatureExtraction(collaborativeFiltering.getFeatureExtraction());
+            exist.setTrainModel(collaborativeFiltering.getTrainModel());
+            exist.setSaveModel(collaborativeFiltering.getSaveModel());
+            collaborativeFilteringRepository.save(exist);
+            return exist;
         } else {
             return collaborativeFilteringRepository.save(collaborativeFiltering);
         }
@@ -232,7 +236,7 @@ public class RecommendationService {
     public CollaborativeFiltering parseJsonData(Map<String, Object>  request) {
         List<String> keySet = new LinkedList<>(request.keySet());
         List<String> orderOfSteps = new LinkedList<>();
-        orderOfSteps.add("modelName");
+        orderOfSteps.add("jobName");
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");

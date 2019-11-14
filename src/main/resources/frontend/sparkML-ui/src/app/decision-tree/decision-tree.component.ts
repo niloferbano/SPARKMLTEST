@@ -17,13 +17,14 @@ export class DecisionTreeComponent implements OnInit {
 
 
   ngOnInit() {
-    this.decisionTreeParamForm = this.formBuilder.group({
-      impurity: new FormControl('entropy', Validators.required),
-      depth: new FormControl(Validators.required),
-      maxBins: new FormControl(Validators.required),
-      training_size: new FormControl( 0.8, Validators.required),
-      test_size: new FormControl(0.2, Validators.required),
-    })
+    this.decisionTreeParamForm = this.data;
+    // this.decisionTreeParamForm = this.formBuilder.group({
+    //   impurity: new FormControl('entropy', Validators.required),
+    //   depth: new FormControl(Validators.required),
+    //   maxBins: new FormControl(Validators.required),
+    //   training_size: new FormControl( 0.8, Validators.required),
+    //   test_size: new FormControl(0.2, Validators.required),
+    // })
 
   }
 

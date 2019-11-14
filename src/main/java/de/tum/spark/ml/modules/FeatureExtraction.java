@@ -37,7 +37,7 @@ public class FeatureExtraction {
         codeVariables.put("sparkSession", inputOutputMapper.getVariableName());
         codeVariables.put("filePath", featureExtractionDto.getFilePath());
         codeVariables.put("filePathVariable", JavaCodeGenerator.newVariableName());
-        codeVariables.put("labelColName", featureExtractionDto.getLabledCol());
+        codeVariables.put("labelColName", featureExtractionDto.getLabelCol());
         codeVariables.put("labelColNameVariable", JavaCodeGenerator.newVariableName());
         codeVariables.put("removeCol", JavaCodeGenerator.newVariableName());
         codeVariables.put("columnsToRemove", featureExtractionDto.getColWithString());

@@ -22,8 +22,8 @@ public class CollaborativeFiltering {
     @Id
     private String id;
     @Column(unique = true)
-    @Field("ModelName")
-    private String modelName;
+    @Field("JobName")
+    private String jobName;
 
     @NotNull
     @Field("FeatureExtraction")

@@ -7,7 +7,7 @@ public class CollaborativeFilteringMapper {
 
     public static CollaborativeFiltering mapper(Map<String, Object> mappedData) {
         CollaborativeFiltering collaborativeFiltering = new CollaborativeFiltering();
-        collaborativeFiltering.setModelName(mappedData.get("modelName").toString());
+        collaborativeFiltering.setJobName(mappedData.get("jobName").toString());
         LinkedHashMap<String, Object> sourceData = (LinkedHashMap) mappedData.get("featureExtraction");
         LinkedHashMap<String, Object>  sourceFile = (LinkedHashMap)sourceData.get("sourceFilePath");
         LinkedHashMap<String, String> aliasPath = (LinkedHashMap) sourceData.get("aliasFilePath");

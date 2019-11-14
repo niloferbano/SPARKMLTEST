@@ -12,7 +12,7 @@ import java.util.Map;
 public class FeatureExtractionDto {
 
     private String filePath;
-    private String labledCol;
+    private String labelCol;
     private List<String> colWithString;
 
     public FeatureExtractionDto() {
@@ -21,7 +21,7 @@ public class FeatureExtractionDto {
 
     public FeatureExtractionDto(Map<String, Object> sourceFilePath) {
         this.setFilePath(sourceFilePath.get("filePath").toString());
-        this.setLabledCol(sourceFilePath.get("labledCol").toString());
+        this.setLabelCol(sourceFilePath.get("labelCol").toString());
         this.setColWithString((List) sourceFilePath.get("colWithString"));
 
     }

@@ -19,10 +19,11 @@ export class SaveModelDialogueComponent implements OnInit {
     this.dialogRef.close();
   }
   ngOnInit() {
-    this.saveModelDetail = this.formBuilder.group({
-      filePath: ['', Validators.required],
-      modelName: ['', Validators.required],
-    });
+    this.saveModelDetail = this.data;
+    // this.saveModelDetail = this.formBuilder.group({
+    //   filePath: ['', Validators.required],
+    //   modelName: ['', Validators.required],
+    // });
   }
 
   get f() { return this.saveModelDetail.controls; }

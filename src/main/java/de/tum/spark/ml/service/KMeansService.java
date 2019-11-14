@@ -114,11 +114,11 @@ public class KMeansService {
 
 
     public KMeansClustering save(KMeansClustering kMeansClustering) {
-        String modelName = kMeansClustering.getModelName();
-        KMeansClustering exist = kMeansRepository.findByModelName(modelName);
+        String jobName = kMeansClustering.getJobName();
+        KMeansClustering exist = kMeansRepository.findByJobName(jobName);
 
         if (exist != null) {
-            exist.setModelName(kMeansClustering.getModelName());
+            exist.setJobName(kMeansClustering.getJobName());
             exist.setTrainModel(kMeansClustering.getTrainModel());
             exist.setFeatureExtraction(kMeansClustering.getFeatureExtraction());
             exist.setSaveModel(kMeansClustering.getSaveModel());
@@ -133,7 +133,7 @@ public class KMeansService {
         List<String> keySet = new LinkedList<>(request.keySet());
         List<String> orderOfSteps = new LinkedList<>();
 
-        orderOfSteps.add("modelName");
+        orderOfSteps.add("jobName");
         orderOfSteps.add("featureExtraction");
         orderOfSteps.add("trainModel");
         orderOfSteps.add("saveModel");

@@ -1,24 +1,22 @@
 <div>
   <mat-dialog-content>
     <p>Source file detail</p>
+    <mat-divider></mat-divider>
     <form [formGroup]="featureDetails">
       <mat-form-field>
-        <label>File Path</label>
-        <input matInput formControlName="filePath" placeholder="Provide file path">
+        <input matInput formControlName="filePath"  placeholder="Source file path">
       </mat-form-field>
       <mat-form-field>
-        <label>Label column name</label>
-        <input matInput type="text" formControlName="labelCol">
+        <input matInput type="text" formControlName="labelCol" placeholder="Label column name">
       </mat-form-field>
 
       <mat-form-field>
-        <label>Column with strings</label>
-        <input matInput type="text" formControlName="labelCol">
+        <input matInput  formControlName="colWithStrings" placeholder="Column with strings">
       </mat-form-field>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button [mat-dialog-close]="featureDetails" cdkFocusInitial>Save</button>
+    <button mat-button [mat-dialog-close]="featureDetails" cdkFocusInitial color="primary">Save</button>
   </mat-dialog-actions>
 </div>

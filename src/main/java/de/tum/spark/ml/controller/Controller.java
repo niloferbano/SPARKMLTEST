@@ -8,16 +8,15 @@ import de.tum.spark.ml.model.KMeansClustering;
 import de.tum.spark.ml.service.DecisionTreeService;
 import de.tum.spark.ml.service.KMeansService;
 import de.tum.spark.ml.service.RecommendationService;
+import org.apache.avro.data.Json;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins="http://localhost:4200")
 public class Controller {
 
 
@@ -32,14 +31,15 @@ public class Controller {
 
 
     @RequestMapping(value = "/runModel", method = RequestMethod.POST)
-    public DecisionTree createDecisionTreeModel(@RequestBody Map<String, Object> request) throws IOException {
+    public Object createDecisionTreeModel(@RequestBody Map<String, Object> request) throws IOException {
         DecisionTree decisionTree = decisionTreeService.parseJsonData(request);
         if(decisionTree != null) {
             DecisionTree decisionTree1 = decisionTreeService.save(decisionTree);
             decisionTreeService.generateCode(decisionTree1);
-            return decisionTree1;
+            //return (decisionTree1.getSaveModel().getFilePath()+decisionTree1.getSaveModel().getFilePath()).toString();
+            return Json.parseJson("Successfully created the jar file");
         }
-        return null;
+        return "Application creation failed.";
     }
 
     @RequestMapping(value = "/runKmeans", method = RequestMethod.POST)

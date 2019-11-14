@@ -1,0 +1,17 @@
+<div>
+  <mat-dialog-content>
+    <p>Start new job</p>
+    <mat-divider></mat-divider>
+    <form [formGroup]="job">
+      <mat-form-field >
+        <input  matInput formControlName="jobName" placeholder="Job name" value="_newJob">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="job" cdkFocusInitial>Save</button>
+  </mat-dialog-actions>
+</div>
+
+
