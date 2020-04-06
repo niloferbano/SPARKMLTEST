@@ -1,1 +1,47 @@
-<p>collaborative-filtering works!</p>
+<div>
+  <mat-dialog-content>
+    <p>Collaboarive Filtering Model parameter</p>
+    <mat-divider></mat-divider>
+    <form [formGroup]="data">
+      <mat-form-field>
+        <input matInput formControlName="ranks" placeholder="latent factor"
+               matTooltip="comma separated values">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="alphas"
+               placeholder="Alpha value" matTooltip="comma separted values">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="regParams"
+               placeholder="Standard overfitting parameter" matTooltip="comma separated values">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" formControlName="maxIter" placeholder="max iterations">
+      </mat-form-field>
+      <br>
+      <mat-checkbox formControlName="implicitPref">Implicit preference</mat-checkbox>
+      <br>
+      <mat-form-field>
+        <input matInput type="number" formControlName="numOfBlocks" placeholder="number of blocks"
+        matTooltip="to improve processing">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Evaluation metric</mat-label>
+        <mat-select formControlName="evaluationMetric" value="data.get('evaluationMetric').value">
+          <mat-option value="rmse">rmse</mat-option>
+          <mat-option value="mse">mse</mat-option>
+          <mat-option value="mae">mae</mat-option>
+          <mat-option value="r2">r2</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" formControlName="trainingsize" placeholder="training size" (change)="updatetest($event)">
+      </mat-form-field>
+
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()" [mat-dialog-close]="data" >Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Save</button>
+  </mat-dialog-actions>
+</div>

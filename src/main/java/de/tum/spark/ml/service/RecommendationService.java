@@ -139,7 +139,7 @@ public class RecommendationService {
     public TypeSpec.Builder createRatingClass(Map<String, Object> sourceDetail) {
         Map<String, Object> codeVariables = new LinkedHashMap<>();
         codeVariables.put("classname", APP_NAME);
-        Map<String, String> types = (Map) sourceDetail.get("ratingColType");
+       // Map<String, String> types = (Map) sourceDetail.get("ratingColType");
         codeVariables.put("productId", sourceDetail.get("itemColName"));
 
         String[] inputs = sourceDetail.get("orderOfSourceColumns").toString().split(",");
@@ -168,7 +168,7 @@ public class RecommendationService {
         List<Map<String, String>> parameterOrder = new LinkedList<>();
 
         for (String str : inputs) {
-            if (types.get(str) == null || types.get(str).equals("int")) {
+            if (sourceDetail.get(str) == null || sourceDetail.get(str).equals("int")) {
                 FieldSpec fieldSpec = FieldSpec.builder(Integer.class, str)
                         .addModifiers(Modifier.PRIVATE)
                         .build();

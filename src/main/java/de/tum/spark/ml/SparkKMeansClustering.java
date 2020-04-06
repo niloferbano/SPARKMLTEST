@@ -11,9 +11,10 @@ import org.apache.spark.sql.SparkSession;
 import org.apache.spark.ml.feature.StandardScaler;
 import org.apache.spark.storage.StorageLevel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.toMap;
 
 public class SparkKMeansClustering {
 
@@ -89,6 +90,8 @@ public class SparkKMeansClustering {
         int endIter = 100;
         int step = 10;
 
+        Map<Integer, Double> cost = new LinkedHashMap<Integer, Double>();
+        Map<Integer, KMeansModel> models = new LinkedHashMap<Integer, KMeansModel>();
         for(int iter = startIter; iter <= endIter; iter += step) {
             KMeans kMeans = new KMeans().setFeaturesCol("scaledFeatures")
                     .setK(iter)
@@ -96,12 +99,24 @@ public class SparkKMeansClustering {
                     .setInitMode("random")
                     .setSeed(new Random().nextLong());
             KMeansModel model = kMeans.fit(finalClusterData);
+            model.clusterCenters();
             double WSSSE = model.computeCost(finalClusterData);
-            System.out.print("With k{" + iter + "}");
-            System.out.println("*******Sum of Squared Errors = " + WSSSE);
-            System.out.println("----------------------------------------------------------");
-
+            cost.put(iter, WSSSE);
+            models.put(iter, model);
+//            System.out.print("With k{" + iter + "}");
+//            System.out.println("*******Sum of Squared Errors = " + WSSSE);
+//            System.out.println("----------------------------------------------------------");
         }
+
+        Map<Integer, Double> vqtkeniici = cost.entrySet()
+                .stream()
+                .sorted(comparingByValue())
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+        Integer hwnnwdbhqd = vqtkeniici.entrySet().stream().findFirst().get().getKey();
+        KMeansModel okvhgrwqrk = models.get(hwnnwdbhqd);
+        System.out.println("*******Optimum K  = "+  hwnnwdbhqd);
+        System.out.println("*******Error with Optimum K  = "+ vqtkeniici.get(hwnnwdbhqd));
         spark.stop();
     }
 

@@ -134,9 +134,6 @@ public class SparkCollaborativeFiltering {
                 .javaRDD()
                 .map(Rating::parseRating);
 
-
-
-
         Dataset<Row> ratings = spark.createDataFrame(userArtistData, Rating.class).cache();
 
 

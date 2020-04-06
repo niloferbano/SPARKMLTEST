@@ -10,7 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SetUpSparkSession {
-    public static InputOutputMapper getSparkSession(String appName, Map<String, String> sparkConfig, JavaCodeGenerator javaCodeGenerator) {
+    public static InputOutputMapper getSparkSession(String appName, Map<String, String> sparkConfig,
+                                                    JavaCodeGenerator javaCodeGenerator) {
 
         CodeBlock.Builder code = CodeBlock.builder();
         Map<String, Object> codeVariables = new LinkedHashMap<>();

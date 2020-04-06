@@ -31,13 +31,13 @@ public class Controller {
 
 
     @RequestMapping(value = "/runModel", method = RequestMethod.POST)
-    public Object createDecisionTreeModel(@RequestBody Map<String, Object> request) throws IOException {
+    public String createDecisionTreeModel(@RequestBody Map<String, Object> request) throws IOException {
         DecisionTree decisionTree = decisionTreeService.parseJsonData(request);
         if(decisionTree != null) {
             DecisionTree decisionTree1 = decisionTreeService.save(decisionTree);
-            decisionTreeService.generateCode(decisionTree1);
+            String path = decisionTreeService.generateCode(decisionTree1);
             //return (decisionTree1.getSaveModel().getFilePath()+decisionTree1.getSaveModel().getFilePath()).toString();
-            return Json.parseJson("Successfully created the jar file");
+            return "Jar file created at path " + path;
         }
         return "Application creation failed.";
     }

@@ -23,13 +23,14 @@ public class SaveModel {
         codeVariables.put("filePath", saveModelDto.getFilePath());
         codeVariables.put("filePathVariable", JavaCodeGenerator.newVariableName());
         codeVariables.put("modelName", saveModelDto.getModelName());
+        codeVariables.put("model", ".model");
         MethodSpec saveModelMethod = MethodSpec.methodBuilder("saveModel")
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                 .addParameter(String.class, codeVariables.get("modelName").toString())
                 .addParameter(String.class, codeVariables.get("filePathVariable").toString())
                 .addParameter(inputOutputMapper.getVariableTypeName(), inputOutputMapper.getVariableName())
                 .beginControlFlow("try")
-                .addNamedCode("$modelParam:L.write().overwrite().save($filePathVariable:L+$modelName:L);\n", codeVariables)
+                .addNamedCode("$modelParam:L.write().overwrite().save($filePathVariable:L+$modelName:L+\".model\");\n", codeVariables)
                 .addStatement("$T.out.println($S)", System.class, "Model successfully saved")
                 .nextControlFlow("catch ($T io)", ioEx)
                 .addStatement("$T.out.println($S)", System.class, "Model can not be saved")

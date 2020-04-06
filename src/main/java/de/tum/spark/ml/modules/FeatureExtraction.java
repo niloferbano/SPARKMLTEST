@@ -37,7 +37,7 @@ public class FeatureExtraction {
         codeVariables.put("sparkSession", inputOutputMapper.getVariableName());
         codeVariables.put("filePath", featureExtractionDto.getFilePath());
         codeVariables.put("filePathVariable", JavaCodeGenerator.newVariableName());
-        codeVariables.put("labelColName", featureExtractionDto.getLabelCol());
+        codeVariables.put("labelColName", featureExtractionDto.getLabelCol() );
         codeVariables.put("labelColNameVariable", JavaCodeGenerator.newVariableName());
         codeVariables.put("removeCol", JavaCodeGenerator.newVariableName());
         codeVariables.put("columnsToRemove", featureExtractionDto.getColWithString());
@@ -51,10 +51,8 @@ public class FeatureExtraction {
         //Machine learning algorithm can not be applied to string value.remove the string columns.
         if (featureExtractionDto.getColWithString() != null) {
             code.beginControlFlow("for(String col: $L)", codeVariables.get("removeCol"));
-
-                code.addStatement("$L = $L.drop(col)", codeVariables.get("variable"), codeVariables.get("variable"));
-                code.endControlFlow();
-
+            code.addStatement("$L = $L.drop(col)", codeVariables.get("variable"), codeVariables.get("variable"));
+            code.endControlFlow();
         }
 
         code.beginControlFlow("for(String c:  $L.columns())", codeVariables.get("variable"));

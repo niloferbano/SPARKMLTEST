@@ -119,13 +119,9 @@ public class CFTrainModel {
         codeVariables.put("alphas", JavaCodeGenerator.newVariableName());
         codeVariables.put("regParams", JavaCodeGenerator.newVariableName());
         codeVariables.put("ranks", JavaCodeGenerator.newVariableName());
-        //code.addStatement("$T $L = 0", codeVariables.get("integer"), codeVariables.get("rank"));
-        //code.addStatement("$T $L = 0.0", codeVariables.get("double"), codeVariables.get("reg"));
-        //code.addStatement("$T $L = 0.0", codeVariables.get("double"), codeVariables.get("alpha"));
         code.addStatement("$T $L = $L", codeVariables.get("integer"), codeVariables.get("numOfBlocksParam"), collaborativeFiltering.getNumOfBlocks());
         codeVariables.put("implicitPref", collaborativeFiltering.getImplicitPref());
         codeVariables.put("implicitPrefParam", "implicitPref");
-        //code.addStatement("$T $L = $L", Boolean.class,  codeVariables.get("implicitPrefParam"), codeVariables.get("implicitPref"));
         ParameterizedTypeName arrayOfInteger = ParameterizedTypeName.get(ClassName.get(ArrayList.class), integerType);
         codeVariables.put("arrayOfInteger", arrayOfInteger);
         code.addNamed("$arrayOfInteger:T $ranks:L = new $arrayOfInteger:T();\n", codeVariables);
@@ -223,15 +219,23 @@ public class CFTrainModel {
                 codeVariables.get("integer"), codeVariables.get("ranks"));
         code.beginControlFlow("for($T regParam: $L)",
                 codeVariables.get("double"), codeVariables.get("regParams"));
-        code.beginControlFlow("for($T alpha: $L)",
-                codeVariables.get("double"), codeVariables.get("alphas"));
+        if( collaborativeFiltering.getImplicitPref()) {
+            code.beginControlFlow("for($T alpha: $L)",
+                    codeVariables.get("double"), codeVariables.get("alphas"));
+        }
         code.addNamed("$linkedListString:T $hyperparamList:L = new $linkedListString:T();\n", codeVariables);
         code.addNamed("$hyperparamList:L.push(\"Rank: \" + rank);\n", codeVariables);
         code.addNamed("$hyperparamList:L.push(\"RegParams: \" + regParam);\n", codeVariables);
-        code.addNamed("$hyperparamList:L.push(\"Alpha: \" + alpha);\n", codeVariables);
-        code.addNamed("$alsVariable:L.setAlpha(alpha)\n" +
-                "   .setRank(rank)\n" +
-                "   .setRegParam(regParam);\n", codeVariables);
+        if( collaborativeFiltering.getImplicitPref() == true) {
+            code.addNamed("$hyperparamList:L.push(\"Alpha: \" + alpha);\n", codeVariables);
+            code.addNamed("$alsVariable:L.setAlpha(alpha)\n" +
+                    "   .setRank(rank)\n" +
+                    "   .setRegParam(regParam);\n", codeVariables);
+        }
+        else {
+            code.addNamed("$alsVariable:L.setRank(rank)\n" +
+                    "   .setRegParam(regParam);\n", codeVariables);
+        }
         code.addNamed("$alsModel:T $alsModelVariable:L = $alsVariable:L.fit($trainingData:L);\n", codeVariables);
         code.addNamed("$alsModelVariable:L.setColdStartStrategy(\"drop\");\n", codeVariables);
         code.addNamed("$datasetRow:T $predictions:L = $alsModelVariable:L.transform($testData:L);\n", codeVariables);
@@ -247,7 +251,9 @@ public class CFTrainModel {
         code.addStatement("loop++");
         code.endControlFlow();
         code.endControlFlow();
-        code.endControlFlow();
+        if( collaborativeFiltering.getImplicitPref()) {
+            code.endControlFlow();
+        }
 
         codeVariables.put("sortedArray", JavaCodeGenerator.newVariableName());
 

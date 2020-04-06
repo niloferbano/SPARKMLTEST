@@ -37,7 +37,7 @@ public class DecisionTreeService {
         put("spark.driver.bindAddress", "127.0.0.1");
     }};
 
-    public void generateCode(DecisionTree decisionTree) throws IOException {
+    public String generateCode(DecisionTree decisionTree) throws IOException {
         Map<String, Object> codeVariables = new LinkedHashMap<>();
         ClassName sparkSession = ClassName.get("org.apache.spark.sql", "SparkSession");
 
@@ -53,13 +53,6 @@ public class DecisionTreeService {
         codeVariables.put("sparkSession", inputOutputMapper.getVariableTypeName());
         codeVariables.put("sessionName", inputOutputMapper.getVariableName());
         codeVariables.put("appName", "decisionTree");
-//        javaCodeGenerator.getMainMethod()
-//                .addCode("$sparkSession:T $sessionName:L = $sparkSession:T.builder()\n" +
-//                        ".appName(\"decisionTree\")\n" +
-//                        ".config(\"spark.master\",\"local\")\n" +
-//                        ".config(\"spark.driver.bindAddress\",\"127.0.0.1\")" +
-//                        ".getOrCreate();\n", codeVariables)
-//                .addStatement("$T.out.println($S)", System.class, "=====******Spark Started*******=====");
 
         inputOutputMapper = FeatureExtraction.getJavaCode(inputOutputMapper, decisionTree.getFeatureExtraction(), javaCodeGenerator);
         ClassName Dataset = ClassName.get("org.apache.spark.sql", "Dataset");
@@ -97,10 +90,10 @@ public class DecisionTreeService {
                         ".setLabelCol(\"labelCol\")\n" +
                         ".setPredictionCol(\"prediction\")\n" +
                         ".setMetricName(\"accuracy\");\n", codeVariables)
-                .addNamedCode("double $accuracy:L = $evaluator:L.evaluate($prediction:L);\n", codeVariables)
-                .addStatement("$T.out.printf($S,$N)", System.class, "Accuracy = %f", codeVariables.get("accuracy"));
+                .addNamedCode("double $accuracy:L = $evaluator:L.evaluate($prediction:L);\n", codeVariables);
 
         SaveModel.getJavaCode(decisionTree.getSaveModel(), javaCodeGenerator, inputOutputMapper);
+        javaCodeGenerator.getMainMethod().addStatement("$T.out.printf($S,$N)", System.class, "======>Accuracy = %f\n", codeVariables.get("accuracy"));
         javaCodeGenerator.getMainMethod()
                 .addNamedCode("$sessionName:L.stop();\n", codeVariables);
         System.out.println(System.getProperty("user.dir"));
@@ -110,8 +103,10 @@ public class DecisionTreeService {
 
         try {
             String result = MavenBuild.runMavenCommand("clean package", projectPath);
+            return projectPath;
         } catch (Exception e) {
             System.out.println("An error occurred when building with Maven");
+            return "Build failed";
         }
     }
 

@@ -44,7 +44,7 @@ public class SparkDecisionTree {
 
         Dataset<Row> predictions = dtc_model.transform(test_data);
         modelEvaluator(predictions);
-        SaveModel("DTC_Model", dtc_model);
+        SaveModel("DTC", dtc_model);
 
         spark.stop();
     }

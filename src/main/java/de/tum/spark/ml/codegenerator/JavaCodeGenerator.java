@@ -73,7 +73,6 @@ public class JavaCodeGenerator {
 
     }
 
-
     public static String newVariableName() {
         return RandomStringUtils.randomAlphabetic(VARIABLES_NAME_LENGTH).toLowerCase();
     }

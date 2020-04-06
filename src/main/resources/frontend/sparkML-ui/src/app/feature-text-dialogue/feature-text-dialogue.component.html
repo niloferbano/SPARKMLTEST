@@ -2,16 +2,13 @@
   <mat-dialog-content>
     <p>Source file detail</p>
     <mat-divider></mat-divider>
-<!--    <label>File Path</label>-->
-<!--    <input type="file" (change)="onFileSelected($event)">-->
-    <form [formGroup]="sourceFilDetail">
+    <form [formGroup]="sourceData.get('sourceFilePath')">
       <mat-form-field>
-        <input matInput formControlName="filePath" placeholder="alias file path">
+        <input matInput formControlName="filePath" placeholder="source file path">
       </mat-form-field>
       <mat-form-field>
         <input matInput type="text" formControlName="separator" placeholder="Separator">
       </mat-form-field>
-      <p>Source Detail</p>
       <div formGroupName="sourceDetail">
         <mat-form-field>
           <input matInput formControlName="orderOfSourceColumns" placeholder="order of source column"
@@ -39,7 +36,7 @@
     <mat-divider></mat-divider>
 <!--    <label>File Path</label>-->
 <!--    <input type="file" (change)="onFileSelected($event)">-->
-    <form [formGroup]="aliasFileDetail">
+    <form [formGroup]="sourceData.get('aliasFilePath')">
       <mat-form-field>
         <input matInput formControlName="filePath" placeholder="alias file path">
       </mat-form-field>
@@ -53,6 +50,6 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button [mat-dialog-close]="sourceData" cdkFocusInitial>Save</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="sourceData" cdkFocusInitial>Save</button>
   </mat-dialog-actions>
 </div>

@@ -36,7 +36,7 @@
           </button>
           <button mat-raised-button (click)="openSaveModel()" *ngIf="item === 'Save Model'">Details</button>
           <button mat-raised-button (click)="openDecisionTree()" *ngIf="item === 'Decision Tree'">Details</button>
-          <button mat-raised-button (click)="openFeatureExtraction()" *ngIf="item === 'Collaborative Filtering'">
+          <button mat-raised-button (click)="openCollaborativeFiltering()" *ngIf="item === 'Collaborative Filtering'">
             Details
           </button>
           <button mat-raised-button (click)="openKMeans()" *ngIf="item === 'KMEANS'">Details</button>
@@ -54,6 +54,9 @@
         <div *ngIf="done.length ===4 && done[3] !== 'Save Model' ">
           <mat-error>The fourth component should be save model</mat-error>
         </div>
+        <div *ngIf="done.length > 4">
+          <mat-error>The number of components should not be more than 4</mat-error>
+        </div>
       </div>
       <div *ngIf="isNotValid">
         <mat-error>There is a mismatch of order of components provided for the pipeline</mat-error>
@@ -61,6 +64,7 @@
     </div>
   </div>
 
-  <button mat-raised-button color="primary" (click)="GenerateJarFile()">Generate Jar</button>
+  <button mat-raised-button color="primary" (click)="GenerateJarFile()">Generate Jar</button><mat-spinner *ngIf="isloading" value=25></mat-spinner>
+
 
 </div>

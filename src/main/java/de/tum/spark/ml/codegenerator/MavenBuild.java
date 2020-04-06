@@ -10,9 +10,9 @@ public class MavenBuild {
     public static final String MAVEN_PATH = "/usr/local/Cellar/maven/3.6.2";
 
     public static String runMavenCommand(String mavenCommand, String projectPath) throws MavenInvocationException {
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile(new File(projectPath));
-        request.setGoals(Collections.singletonList(mavenCommand));
+        InvocationRequest invocationRequest = new DefaultInvocationRequest();
+        invocationRequest.setPomFile(new File(projectPath));
+        invocationRequest.setGoals(Collections.singletonList(mavenCommand));
 
         // create invoker
         Invoker invoker = new DefaultInvoker();
@@ -29,7 +29,7 @@ public class MavenBuild {
         invoker.setMavenHome(new File(MAVEN_PATH));
 
         // run command
-        InvocationResult invocationResult = invoker.execute(request);
+        InvocationResult invocationResult = invoker.execute(invocationRequest);
         if (invocationResult.getExitCode() != 0) {
             throw new IllegalStateException("Build failed.");
         }
