@@ -46,7 +46,7 @@ public class RecommendationService {
         put("spark.driver.bindAddress", "127.0.0.1");
     }};
 
-    public void generateCode(CollaborativeFiltering collaborativeFiltering) throws IOException {
+    public String generateCode(CollaborativeFiltering collaborativeFiltering) throws IOException {
         Map<String, Object> codeVariables = new LinkedHashMap<>();
 
         String outputPath = System.getProperty("user.home");
@@ -112,10 +112,13 @@ public class RecommendationService {
         FileUtils.copyFileToDirectory(new File(System.getProperty("user.dir") + "/src/main/resources/spark-sample-pom/pom.xml"), new File(projectPath));
         javaCodeGenerator.generateJaveClassFile();
 
+        String result = "";
         try {
-            String result = MavenBuild.runMavenCommand("clean package", projectPath);
+            result = MavenBuild.runMavenCommand("clean package", projectPath);
+            return projectPath;
         } catch (Exception e) {
             System.out.println("An error occurred when building with Maven");
+            return result;
         }
     }
 

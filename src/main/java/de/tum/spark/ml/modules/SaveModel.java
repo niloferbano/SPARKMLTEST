@@ -13,6 +13,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SaveModel {
+    /**
+     * Generates code for saving the optimal ML model
+     * @param saveModelDto
+     * @param javaCodeGenerator
+     * @param inputOutputMapper
+     * @return
+     */
     public static String getJavaCode(SaveModelDto saveModelDto, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
 
         ClassName ioEx = ClassName.get(IOException.class);

@@ -11,6 +11,13 @@ import java.util.Map;
 
 public class DecisionTreeTrainModel {
 
+    /**
+     *
+     * @param DTTrainModelDto
+     * @param javaCodeGenerator
+     * @param inputOutputMapper
+     * @return
+     */
     public static InputOutputMapper getJavaCode(DTTrainModelDto DTTrainModelDto, JavaCodeGenerator javaCodeGenerator, InputOutputMapper inputOutputMapper) {
         ParameterizedTypeName datasetRow = ParameterizedTypeName.get(
                 ClassName.get("org.apache.spark.sql", "Dataset"),

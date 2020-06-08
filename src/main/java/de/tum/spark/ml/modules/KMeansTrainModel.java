@@ -11,6 +11,13 @@ import java.util.Map;
 import java.util.Random;
 
 public class KMeansTrainModel {
+    /***
+     * generates code for creating Kmeans model
+     * @param kMeansTrainModelDto
+     * @param javaCodeGenerator
+     * @param inputOutputMapper
+     * @return inputOutputMapper
+     */
 
     public static InputOutputMapper getJaveCode(KMeansTrainModelDto kMeansTrainModelDto,
                                                 JavaCodeGenerator javaCodeGenerator,
@@ -43,7 +50,7 @@ public class KMeansTrainModel {
         codeVariables.put("system", System.class);
 
         CodeBlock.Builder code = CodeBlock.builder();
-        //If user has sends only one K value
+        //If user sends only one K value
         if (kMeansTrainModelDto.getHighK() == null) {
             code.addNamed("$kmeans:T $kmeansVariable:L = new KMeans().setFeaturesCol(\"features\")", codeVariables);
             code.addNamed(".setK($lowKParam:L)", codeVariables);

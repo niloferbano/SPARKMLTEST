@@ -24,13 +24,9 @@ public class SparkDecisionTree {
                 .config("spark.driver.bindAddress", "127.0.0.1")
                 .getOrCreate();
 
-
-
         Dataset<Row> df = featureExtraction(spark, "/Users/coworker/Downloads/covtype.data", "_c54");
 
         Dataset<Row> features_df = df.drop("labelCol");
-        //Dataset<Row> target_df = df.select("labelCol");
-
 
         VectorAssembler assembler = new VectorAssembler().setInputCols(features_df.columns()).setOutputCol("features");
         Dataset<Row> input_data = assembler.transform(df);

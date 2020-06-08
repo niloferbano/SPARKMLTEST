@@ -14,6 +14,20 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class CFTrainModel {
+    /**
+     * Generates the code for creating collaborative filtering recommender system.
+     * The machine learning model is generated using alternative least square algorithm
+     * to learn the latent factors
+     * @param collaborativeFiltering
+     * ML model parameters
+     * @param javaCodeGenerator
+     * JavaPoet generated code skeleton
+     * @param inputOutputMapper
+     * Object containing parameter name and type
+     * @param sourceCols
+     * Input data column names
+     * @return inputOutputMapperRet
+     */
 
     public static InputOutputMapper getJaveCode(CollaborativeFilteringTrainModelDto collaborativeFiltering,
                                                 JavaCodeGenerator javaCodeGenerator,
@@ -157,51 +171,6 @@ public class CFTrainModel {
         codeVariables.put("reg", "regParam");
         codeVariables.put("rank", "rank");
 
-
-//        code.addNamed("$als:T $alsVariable:L = new ALS();\n", codeVariables);
-//        code.addNamed("$linkedListString:T $hyperparamList:L = new $linkedListString:T();\n", codeVariables);
-//        code.addNamed("$alsModel:T $alsModelVariable:L;\n", codeVariables);
-//        code.addNamed("$regressionEvaluator:T $regressionEvaluatorVariable:L = new RegressionEvaluator()\n" +
-//                "   .setMetricName($evaluationMetric:S)\n" +
-//                "   .setLabelCol($ratingCol:S)\n" +
-//                "   .setPredictionCol(\"prediction\");\n", codeVariables);
-//        code.addNamed("$double:T rmse;\n", codeVariables);
-//        code.addNamed("$datasetRow:T $predictions:L;\n", codeVariables);
-//        Integer loop = 0;
-//        for(Integer rank: ranks){
-//            for(Double alpha: alphas) {
-//                for(Double regParam: regParamas){
-//                    code.addStatement("$L = $L", codeVariables.get("rank"), rank);
-//                    code.addStatement("$L = $L", codeVariables.get("reg"), regParam);
-//                    code.addStatement("$L = $L", codeVariables.get("alpha"), alpha);
-//                    code.addStatement("$L = $L", "loop", loop);
-//                    code.addNamed("$hyperparamList:L.push(\"Rank: \" + $rank:L);\n", codeVariables);
-//                    code.addNamed("$hyperparamList:L.push(\"RegParams: \" + regParam);\n", codeVariables);
-//                    code.addNamed("$hyperparamList:L.push(\"Alpha: \" + alpha);\n", codeVariables);
-//                    code.addNamed(
-//                            "   $alsVariable:L.setMaxIter($maxIter:L)\n" +
-//                            "   .setSeed(new $random:T().nextLong())\n" +
-//                            "   .setAlpha($alpha:L)\n" +
-//                            "   .setRank($rank:L)\n" +
-//                            "   .setRegParam($reg:L)\n" +
-//                            "   .setImplicitPrefs($implicitPrefParam:L)\n" +
-//                            "   .setNumBlocks($numOfBlocksParam:L)\n" +
-//                            "   .setUserCol($userIdCol:S)\n" +
-//                            "   .setItemCol($itemIdCol:S)\n" +
-//                            "   .setRatingCol($ratingCol:S);\n", codeVariables);
-//                    code.addNamed("$alsModelVariable:L = $alsVariable:L.fit($trainingData:L);\n", codeVariables);
-//                    code.addNamed("$alsModelVariable:L.setColdStartStrategy(\"drop\");\n", codeVariables);
-//                    code.addNamed("$predictions:L = $alsModelVariable:L.transform($testData:L);\n", codeVariables);
-//                    code.addNamed("rmse = $regressionEvaluatorVariable:L.evaluate($predictions:L);\n", codeVariables);
-//                    code.addNamed("$errorArray:L.put(loop, rmse);\n", codeVariables);
-//                    code.addNamed("$modelArray:L.put(loop, $alsModelVariable:L);\n", codeVariables);
-//                    code.addNamed("$hyperparamMap:L.put(loop, new $linkedListString:T($hyperparamList:L));\n", codeVariables);
-//                    code.addNamed("$hyperparamList:L.clear();\n",codeVariables);
-//                    loop++;
-//
-//                }
-//            }
-//         }
         code.addNamed("$als:T $alsVariable:L = new ALS();\n", codeVariables);
         if( collaborativeFiltering.getImplicitPref()) {
             code.addNamed("$alsVariable:L.setImplicitPrefs($implicitPref:L);\n", codeVariables);
@@ -275,12 +244,9 @@ public class CFTrainModel {
 
         javaCodeGenerator.getMainMethod().addCode(code.build());
 
-        InputOutputMapper returnVal = new InputOutputMapper(alsModel, codeVariables.get("alsModelVariable").toString());
+        InputOutputMapper inputOutputMapperRet = new InputOutputMapper(alsModel, codeVariables.get("alsModelVariable").toString());
 
-        return  returnVal;
-
-
-
+        return  inputOutputMapperRet;
 
     }
 }

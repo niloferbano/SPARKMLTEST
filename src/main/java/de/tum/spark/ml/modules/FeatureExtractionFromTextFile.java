@@ -11,6 +11,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FeatureExtractionFromTextFile {
+    /**
+     * Generates code for feature extraction step
+     * This code generation works on text files as input data source
+     * @param inputOutputMapper
+     * @param featureExtractionDto
+     * @param javaCodeGenerator
+     * @return
+     */
     public static Map<String, InputOutputMapper> getJavaCode(InputOutputMapper inputOutputMapper,
                                                       FeatureExtractionFromTextFileDto featureExtractionDto,
                                                       JavaCodeGenerator javaCodeGenerator) {
@@ -76,7 +84,6 @@ public class FeatureExtractionFromTextFile {
 
         javaCodeGenerator.getMainMethod().addCode(code.build());
 
-        //
         Map<String, InputOutputMapper> returnValues = new LinkedHashMap<>();
         returnValues.put("MainSourceFile", new InputOutputMapper(datasetRow, codeVariables.get("ratings").toString()));
         returnValues.put("AliasFile", new InputOutputMapper(datasetRow, codeVariables.get("rawAliasData").toString()));

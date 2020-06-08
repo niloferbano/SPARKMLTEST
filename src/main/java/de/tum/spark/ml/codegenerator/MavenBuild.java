@@ -5,10 +5,18 @@ import org.apache.maven.shared.invoker.*;
 import java.io.File;
 import java.util.Collections;
 
+
 public class MavenBuild {
 
-    public static final String MAVEN_PATH = "/usr/local/Cellar/maven/3.6.2";
+    public static final String MAVEN_PATH = "/usr/local/Cellar/maven/3.6.1";
 
+    /**
+     * Java package generation using Maven
+     * @param mavenCommand
+     * @param projectPath
+     * @return
+     * @throws MavenInvocationException
+     */
     public static String runMavenCommand(String mavenCommand, String projectPath) throws MavenInvocationException {
         InvocationRequest invocationRequest = new DefaultInvocationRequest();
         invocationRequest.setPomFile(new File(projectPath));

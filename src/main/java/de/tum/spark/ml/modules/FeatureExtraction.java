@@ -14,6 +14,14 @@ public class FeatureExtraction {
 
     ArrayList<String> colto = new ArrayList<>();
 
+    /**
+     * Generates code for feature extraction step
+     * This code generation works on any data file as source
+     * @param inputOutputMapper
+     * @param featureExtractionDto
+     * @param javaCodeGenerator
+     * @return
+     */
     public static InputOutputMapper getJavaCode(InputOutputMapper inputOutputMapper, FeatureExtractionDto featureExtractionDto, JavaCodeGenerator javaCodeGenerator) {
 
 

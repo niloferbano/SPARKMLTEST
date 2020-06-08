@@ -33,15 +33,12 @@ public class SparkKMeansClustering {
                 // .config("spark.executor.memory", "32g")
                 .getOrCreate();
 
-        //spark.conf();
-        //System.out.println("==================>" + spark.conf());
         Dataset<Row> df = spark.read()
                 .option("header", false)
                 .option("inferSchema", true)
                 //.option("partition", 4)
                 .csv("/Users/coworker/Downloads/kddcup.data").cache();
-
-
+        
 
         List<String> dropCols = new ArrayList<String>();
 
@@ -66,12 +63,8 @@ public class SparkKMeansClustering {
             df = df.withColumn(c, df.col(c).cast("double"));
 
         }
-        //Dataset<Row> final_data = df.persist(StorageLevel.MEMORY_AND_DISK_2());
         VectorAssembler assembler = new VectorAssembler().setInputCols(target_df.columns()).setOutputCol("features");
-        //df = df.crossJoin(target_df);
-        //df = df.join(target_df);
         Dataset<Row> input_data = assembler.transform(df);
-        //Dataset<Row> final_data = input_data.persist(StorageLevel.MEMORY_ONLY());
 
         StandardScaler standardScaler = new StandardScaler()
                 .setInputCol("features")
@@ -83,9 +76,7 @@ public class SparkKMeansClustering {
 
         System.out.println("*************************Starting KMeans calculations*********************************" );
         KMeans kmeans = new KMeans().setFeaturesCol("features").setK(23).setInitMode("random").setMaxIter(10);
-        //KMeansModel model = kmeans.fit(input_data);
 
-        //double WSSSE = model.computeCost(input_data);
         int startIter = 30;
         int endIter = 100;
         int step = 10;
@@ -103,9 +94,6 @@ public class SparkKMeansClustering {
             double WSSSE = model.computeCost(finalClusterData);
             cost.put(iter, WSSSE);
             models.put(iter, model);
-//            System.out.print("With k{" + iter + "}");
-//            System.out.println("*******Sum of Squared Errors = " + WSSSE);
-//            System.out.println("----------------------------------------------------------");
         }
 
         Map<Integer, Double> vqtkeniici = cost.entrySet()

@@ -289,18 +289,18 @@ export class HomePageComponent implements OnInit {
         saveModel: this.saveModelDetail
       });
       if (this.done.indexOf("Decision Tree") != -1) {
-        this.services.generateDecisionTree(JSON.stringify(this.paramData.value))
+        this.services.generateDecisionTree(this.paramData.value)
           .pipe(first())
           .subscribe(
             data => {
-              this.snackBar.open(data["message"], "success", {
+              this.snackBar.open(data.toString(), "success", {
                 duration: 10000
               })
               this.isloading = false;
             },
             error => {
               console.log(error);
-              this.snackBar.open(error["error"]["text"], "success", {
+              this.snackBar.open(error["error"]["text"], "Warning", {
                 duration: 10000
               })
               this.isloading = false;
@@ -312,7 +312,7 @@ export class HomePageComponent implements OnInit {
           .pipe(first())
           .subscribe(
             data => {
-              this.snackBar.open(data["message"], "success", {
+              this.snackBar.open(data.toString(), "success", {
                 duration: 10000
               })
             },
@@ -329,7 +329,7 @@ export class HomePageComponent implements OnInit {
           .pipe(first())
           .subscribe(
             data => {
-              this.snackBar.open(data["message"], "success", {
+              this.snackBar.open(data.toString(), "success", {
                 duration: 10000
               })
             },

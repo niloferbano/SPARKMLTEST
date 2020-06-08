@@ -10,6 +10,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SetUpSparkSession {
+    /**
+     * Generates code for setting up the Spark Session
+     * @param appName
+     * @param sparkConfig
+     * @param javaCodeGenerator
+     * @return
+     */
     public static InputOutputMapper getSparkSession(String appName, Map<String, String> sparkConfig,
                                                     JavaCodeGenerator javaCodeGenerator) {
 

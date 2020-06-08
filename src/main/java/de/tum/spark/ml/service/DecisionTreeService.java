@@ -37,6 +37,12 @@ public class DecisionTreeService {
         put("spark.driver.bindAddress", "127.0.0.1");
     }};
 
+    /**
+     *
+     * @param decisionTree
+     * @return String
+     * @throws IOException
+     */
     public String generateCode(DecisionTree decisionTree) throws IOException {
         Map<String, Object> codeVariables = new LinkedHashMap<>();
         ClassName sparkSession = ClassName.get("org.apache.spark.sql", "SparkSession");
@@ -101,12 +107,13 @@ public class DecisionTreeService {
         javaCodeGenerator.generateJaveClassFile();
 
 
+        String result = "";
         try {
-            String result = MavenBuild.runMavenCommand("clean package", projectPath);
+            result = MavenBuild.runMavenCommand("clean package", projectPath);
             return projectPath;
         } catch (Exception e) {
             System.out.println("An error occurred when building with Maven");
-            return "Build failed";
+            return "result";
         }
     }
 

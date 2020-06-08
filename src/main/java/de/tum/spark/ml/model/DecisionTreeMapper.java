@@ -14,7 +14,6 @@ public class DecisionTreeMapper {
         decisionTree.setTrainModel(DTTrainModelDtoMapper.mapper ((LinkedHashMap) decisionTreeData.get("trainModel")));
         LinkedHashMap<String, String> saveDetail = (LinkedHashMap<String, String>) decisionTreeData.get("saveModel");
         decisionTree.setSaveModel(new SaveModelDto(saveDetail.get("filePath"), saveDetail.get("modelName")));
-
         return decisionTree;
 
     }

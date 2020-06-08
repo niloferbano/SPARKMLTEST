@@ -109,25 +109,9 @@ public class SparkCollaborativeFiltering {
             }
         });
 
-
-        //rawArtistAliasData = rawArtistAliasData.withColumn("_c0",rawArtistAliasData.col("_c0").cast("int"));
-        //rawArtistAliasData = rawArtistAliasData.withColumn("_c1",(rawArtistAliasData.col("_c1").cast("int")));
-
-
-
-
         rawArtistAliasData.foreach((ForeachFunction<Row>) row -> {
             updateArtistAlias(Integer.parseInt(row.getString(0)), Integer.parseInt(row.getString(1)));
-            //TestApplication.artistAliasMap.put(Integer.parseInt(row.getString(0)), Integer.parseInt(row.getString(1)));
         });
-
-
-
-//        rawUserArtistData.foreach((ForeachFunction<Row>) row -> {
-//            Integer artistID = Integer.parseInt(row.getString(1));
-//            Integer finalArtistData = TestApplication.artistAliasMap.getOrDefault(artistID, artistID);
-//            new Rating(Integer.parseInt( row.getString(0)), finalArtistData, Integer.parseInt( row.getString(2)));
-//        });
 
         JavaRDD<Rating> userArtistData = spark.read()
                 .textFile("/Users/coworker/Downloads/profiledata_06-May-2005/user_artist_data.txt")
@@ -182,53 +166,6 @@ public class SparkCollaborativeFiltering {
                 }
             }
         }
-//        ALS als = new ALS()
-//                .setMaxIter(5)
-//                .setRank(10)
-//                .setAlpha(1.0)
-//                .setRegParam(0.01)
-//                .setUserCol("userId")
-//                .setItemCol("artistId")
-//                .setRatingCol("count");
-//        ALSModel model = als.fit(training);
-
-// Evaluate the model by computing the RMSE on the test data
-// Note we set cold start strategy to 'drop' to ensure we don't get NaN evaluation metrics
-//        model.setColdStartStrategy("drop");
-//        Dataset<Row> predictions = model.transform(test);
-//
-//        RegressionEvaluator evaluator = new RegressionEvaluator()
-//                .setMetricName("rmse") //rmse, mse, mae, r2
-//                .setLabelCol("count")
-//                .setPredictionCol("prediction");
-//        Double rmse = evaluator.evaluate(predictions);
-//        System.out.println("Root-mean-square error = " + rmse);
-
-        //Dataset<Row> userRecs = model.recommendForAllUsers(10);
-
-        // Dataset<Row> users = ratings.select(als.getUserCol()).distinct().limit(3);
-//        users.foreach( row ->{
-//            System.out.println(row);
-//        });
-//
-//        Dataset<Row> userSubsetRecs = model.recommendForUserSubset(users, 10);
-//
-//        userSubsetRecs.foreach(row -> {
-//            System.out.println(row);
-//            //System.out.println(row.getFloat(2));
-//        });
-
-//        Dataset<Row> music = ratings.select(als.getItemCol()).distinct().limit(3);
-//        Dataset<Row> musicRecs = model.recommendForItemSubset(music,10);
-//
-//        musicRecs.foreach(row -> {
-//            System.out.println(row);
-//        });
-
-
-
-//
-
 
     }
 
