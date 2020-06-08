@@ -1,10 +1,10 @@
 target/
 .idea/
- src/main/resources/reference/*
+src/main/resources/reference/*
 src/main/java/de/tum/spark/.DS_Store
 
-	.classpath
-	.factorypath
-	.project
-	.settings/
-	.vscode/
+.classpath
+.factorypath
+.project
+.settings/
+.vscode/
