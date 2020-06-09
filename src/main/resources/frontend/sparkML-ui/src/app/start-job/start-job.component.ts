@@ -24,5 +24,6 @@ export class StartJobComponent implements OnInit {
   onNoClick(): void {
     this.dialogRef.close();
   }
+  get f() { return this.job.controls; }
 
 }
