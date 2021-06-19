@@ -8,3 +8,4 @@ src/main/java/de/tum/spark/.DS_Store
 .project
 .settings/
 .vscode/
+src/main/resources/public/*

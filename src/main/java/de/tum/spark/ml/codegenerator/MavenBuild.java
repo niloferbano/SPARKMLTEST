@@ -8,7 +8,7 @@ import java.util.Collections;
 
 public class MavenBuild {
 
-    public static final String MAVEN_PATH = "/usr/local/Cellar/maven/3.6.1";
+    public static final String MAVEN_PATH = "/usr/local/Cellar/maven/3.8.1";
 
     /**
      * Java package generation using Maven

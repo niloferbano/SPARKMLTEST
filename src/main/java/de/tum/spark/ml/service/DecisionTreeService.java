@@ -113,7 +113,7 @@ public class DecisionTreeService {
             return projectPath;
         } catch (Exception e) {
             System.out.println("An error occurred when building with Maven");
-            return "result";
+            return "An error occurred when building with Maven";
         }
     }
 

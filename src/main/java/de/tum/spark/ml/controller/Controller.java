@@ -66,7 +66,7 @@ public class Controller {
             String path = kMeansService.generateCode(kMeansClustering1);
             return "Source and jar files are created at path: " + path;
         }
-         return "Please send data in correct order. The correct order is : {modelName, featureExtraction, trainModel, saveModel}";;
+        return "Please send data in correct order. The correct order is : {modelName, featureExtraction, trainModel, saveModel}";
     }
 
 
