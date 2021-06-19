@@ -32,10 +32,10 @@ Browse to http://localhost:4200
 ### Creating an ML application jar file from front end
 * Go to http://localhost:4200
 * There are four steps involved in creating a flow for application generation. 
- 1. Start
- 2. FeatureExtraction/FeatureExtractionFromTextFile
- 3. ML model of your choice(Decision Tree/ KMeans/ Collaborative filtering) 
- 4. Save Model
+  1. Start
+  2. FeatureExtraction/FeatureExtractionFromTextFile
+  3. ML model of your choice(Decision Tree/ KMeans/ Collaborative filtering) 
+  4. Save Model
 * After creating a flow by dragging and dropping on the pipeline panel.<br>
   Click Generate Jar button to submit the job.
 * You will get either successful message with path to the package/code <br>
