@@ -70,9 +70,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
-            <version>2.4.4</version>
+       <groupId>org.apache.spark</groupId>
+    <artifactId>spark-core_2.12</artifactId>
+    <version>3.1.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -91,8 +91,8 @@
         </dependency>
         <dependency> <!-- Spark dependency -->
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
-            <version>2.4.4</version>
+            <artifactId>spark-sql_2.12</artifactId>
+            <version>3.1.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

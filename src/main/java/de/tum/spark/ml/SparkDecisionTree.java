@@ -24,7 +24,7 @@ public class SparkDecisionTree {
                 .config("spark.driver.bindAddress", "127.0.0.1")
                 .getOrCreate();
 
-        Dataset<Row> df = featureExtraction(spark, "/Users/coworker/Downloads/covtype.data", "_c54");
+        Dataset<Row> df = featureExtraction(spark, "/Users/nilu/Downloads/covetype.data", "_c54");
 
         Dataset<Row> features_df = df.drop("labelCol");
 
@@ -47,7 +47,7 @@ public class SparkDecisionTree {
 
     public static void SaveModel(String modelName, DecisionTreeClassificationModel dtc_model) {
         try {
-            dtc_model.save("/Users/coworker/Downloads/" + modelName + ".model");
+            dtc_model.save("/Users/nilu/Downloads/" + modelName + ".model");
         } catch (IOException io) {
             System.out.println("Model can not be saved");
         }
