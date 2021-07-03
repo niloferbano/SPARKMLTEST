@@ -59,7 +59,7 @@
                 </executions>
                 <configuration>
                     <executable>ng</executable>
-                    <workingDirectory>src/main/resources/frontend/SparkML-ui</workingDirectory>
+                    <workingDirectory>${project.basedir}/src/main/resources/frontend/SparkML-ui</workingDirectory>
                     <arguments>
                         <argument>build</argument>
                     </arguments>
@@ -91,7 +91,7 @@
         </dependency>
         <dependency> <!-- Spark dependency -->
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.1</artifactId>
+            <artifactId>spark-sql_2.12</artifactId>
             <version>3.1.2</version>
             <exclusions>
                 <exclusion>

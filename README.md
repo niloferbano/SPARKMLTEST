@@ -18,6 +18,9 @@ cd Flow-based-Spark-ML
 ```
 Change the path depending on your installation path MAVEN_PATH in 
 src/main/java/de/tum/spark/ml/codegenerator/MavenBuild.java file
+cd Flow-based-Spark-ML/src/main/resources/frontend/sparkML-ui
+npm install
+cd Flow-based-Spark-ML 
 mvn clean install
 mvn spring-boot:run or java -jar target/your-file.jar or you can use
 choice of your IDE to run the application.
