@@ -16,10 +16,10 @@ cd Flow-based-Spark-ML
 ```
 * Start the backend
 ```
-Change the path depending on your installation path MAVEN_PATH in <br>
+Change the path depending on your installation path MAVEN_PATH in 
 src/main/java/de/tum/spark/ml/codegenerator/MavenBuild.java file
 mvn clean install
-mvn spring-boot:run or java -jar target/your-file.jar or you can use <br> 
+mvn spring-boot:run or java -jar target/your-file.jar or you can use
 choice of your IDE to run the application.
 ```
 * Start the frontend
@@ -32,13 +32,13 @@ Browse to http://localhost:4200
 ### Creating an ML application jar file from front end
 * Go to http://localhost:4200
 * There are four steps involved in creating a flow for application generation. 
- 1. Start
- 2. FeatureExtraction/FeatureExtractionFromTextFile
- 3. ML model of your choice(Decision Tree/ KMeans/ Collaborative filtering) 
- 4. Save Model
-* After creating a flow by dragging and dropping on the pipeline panel.<br>
+  1. Start
+  2. FeatureExtraction/FeatureExtractionFromTextFile
+  3. ML model of your choice(Decision Tree/ KMeans/ Collaborative filtering) 
+  4. Save Model
+* After creating a flow by dragging and dropping on the pipeline panel.
   Click Generate Jar button to submit the job.
-* You will get either successful message with path to the package/code <br>
+* You will get either successful message with path to the package/code 
   created by the application or a failure message in case something goes wrong.
 
 ### Links to the data used for the use cases
